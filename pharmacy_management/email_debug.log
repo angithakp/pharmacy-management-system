@@ -1,0 +1,7 @@
+[2026-03-08 10:52:10.737293+00:00] Attempt To: ['sim_nzai@example.com'] | Subject: Verify Your Account - Jan Aushadhi Pharmacy
+[2026-03-08 10:52:14.742756+00:00] SUCCESS
+[2026-03-08 10:52:14.743761+00:00] FAILED: 'charmap' codec can't encode character '\u2705' in position 0: character maps to <undefined>
+[2026-03-08 10:52:44.991218+00:00] Attempt To: ['sim_itsf@example.com'] | Subject: Verify Your Account - Jan Aushadhi Pharmacy
+[2026-03-08 10:52:48.679435+00:00] SUCCESS
+[2026-03-08 10:59:14.747350+00:00] Attempt To: ['angithavalsan421@gmail.com'] | Subject: Verify Your Account - Jan Aushadhi Pharmacy
+[2026-03-08 10:59:18.575026+00:00] SUCCESS

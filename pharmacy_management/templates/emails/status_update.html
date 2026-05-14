@@ -1,0 +1,67 @@
+{% extends 'emails/base_email.html' %}
+{% block email_content %}
+
+<div style="margin-bottom: 40px; text-align: left;">
+    <span class="status-pill" style="background-color: #f1f5f9; color: #1a4a8d;">ORDER UPDATE</span>
+    <h2 style="margin: 0; font-size: 28px; font-weight: 800; color: #0f172a; letter-spacing: -0.02em;">Order Progress
+        Report</h2>
+    <p style="margin: 6px 0 0 0; font-size: 15px; color: #64748b;">
+        <strong>Reference ID:</strong> {{ order.formatted_id }} | <strong>Live Tracking Enabled</strong>
+    </p>
+</div>
+
+<p style="margin-top: 0; font-size: 17px; color: #1e293b; font-weight: 700;">Hello {{ patient_name|default:"Patient" }},
+</p>
+<p style="line-height: 1.7; color: #475569; font-size: 15px;">
+    Your order at <strong>Janaushadhi Kendra Kunhipally</strong> has reached a new milestone. We are committed to
+    transparency and are pleased to share the latest progress on your medical request.
+</p>
+
+<div class="highlight-card"
+    style="text-align: center; border: 1px solid #1a4a8d; background-color: #f8fafc; padding: 30px; border-radius: 20px; margin: 30px 0;">
+    <div
+        style="color: #1a4a8d; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.15em; margin-bottom: 12px; display: block;">
+        Current Processing Stage</div>
+    <div
+        style="font-size: 36px; font-weight: 900; color: #0f172a; display: block; margin-bottom: 15px; line-height: 1.2;">
+        {{ status }}</div>
+    <div style="font-size: 13px; color: #64748b; font-weight: 500;">
+        <strong>Timeline Status:</strong> Updated on {{ order_date|date:"d M Y, H:i A" }}
+    </div>
+</div>
+
+<div style="margin: 40px 0;">
+    <h3
+        style="font-size: 13px; font-weight: 800; color: #1e293b; margin: 0 0 20px 0; text-transform: uppercase; letter-spacing: 0.1em; border-bottom: 2px solid #e2e8f0; padding-bottom: 12px;">
+        Tracking Information</h3>
+    <table style="width: 100%; border-collapse: collapse; font-size: 15px;">
+        <tr>
+            <td style="padding: 15px 0; color: #64748b; border-bottom: 1px solid #f1f5f9;">Manifest ID</td>
+            <td
+                style="padding: 15px 0; color: #1e293b; font-weight: 700; text-align: right; border-bottom: 1px solid #f1f5f9;">
+                {{ order.formatted_id }}</td>
+        </tr>
+        <tr>
+            <td style="padding: 15px 0; color: #64748b; border-bottom: 1px solid #f1f5f9;">Dispensing Center</td>
+            <td
+                style="padding: 15px 0; color: #1e293b; font-weight: 700; text-align: right; border-bottom: 1px solid #f1f5f9;">
+                Kendra - Kunhipally</td>
+        </tr>
+    </table>
+</div>
+
+<div
+    style="text-align: center; margin-top: 45px; padding: 40px; background-color: #f0fdf4; border-radius: 24px; border: 1px solid #dcfce7;">
+    <p style="margin: 0 0 25px 0; font-size: 15px; color: #166534; font-weight: 500; line-height: 1.6;">
+        You can monitor the real-time progress of your order, including dispatch details and expected delivery, via our
+        live portal.
+    </p>
+    <a href="{{ track_url }}" class="btn" style="background-color: #166534; margin: 0;">Access Live Tracking Portal</a>
+</div>
+
+<p style="font-size: 14px; color: #64748b; margin-top: 40px; line-height: 1.7; text-align: center;">
+    Our team is ensuring your medicines are packed according to strict safety guidelines. You will receive another
+    update when the next stage is complete.
+</p>
+
+{% endblock %}

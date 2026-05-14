@@ -1,0 +1,186 @@
+{% extends 'admin/admin_base.html' %}
+{% block content %}
+
+<!-- MAIN SCOPE SECTION (FORCE FULL PAGE WIDTH) -->
+<section class="bg-white d-print-block" id="printableSection" style="min-height: 100vh; font-family: 'Inter', sans-serif;">
+    <div class="container-fluid py-md-5 px-0">
+        
+        <!-- ACTION BAR (HIDDEN IN PRINT) -->
+        <div class="d-flex justify-content-between align-items-center mb-5 d-print-none px-4">
+            <div>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb mb-1">
+                        <li class="breadcrumb-item small fw-bold text-uppercase ls-1"><a href="/admin/dashboard/" class="text-decoration-none text-muted">Admin</a></li>
+                        <li class="breadcrumb-item active small fw-bold text-uppercase ls-1 text-dark" aria-current="page">Counter Receipt</li>
+                    </ol>
+                </nav>
+                <h2 class="fw-black text-dark mb-0">Counter Bill</h2>
+            </div>
+            <div class="d-flex gap-2">
+                <button onclick="window.print()" class="btn btn-outline-dark rounded-pill px-4 fw-bold shadow-sm">
+                    <i class="fas fa-print me-2"></i> Print Bill
+                </button>
+            </div>
+        </div>
+
+        <!-- THE BILL (RE-ENGINEERED FOR TOTAL PRINT WIDTH) -->
+        <div class="bill-page-wrapper mx-auto" id="printableBill" style="max-width: 900px; background: #fff;">
+            
+            <div class="p-3 p-md-5">
+                <!-- 1. PHARMACY BRANDING -->
+                <div class="text-center mb-4 pb-3 border-bottom border-dark border-opacity-10">
+                    <h1 class="fw-bold mb-2 pharm-title">PRADHAN MANTRI BHARATIYA JANAUSHADHI KENDRA</h1>
+                    <h6 class="fw-bold mb-3 text-uppercase pharm-subtitle">Quality Generic Medicines at Affordable Prices</h6>
+                    <div class="pharm-address">
+                        <p class="mb-0 text-uppercase">Royal Tower, Near Health Center, Chombala (po), Kunhipally</p>
+                        <p class="mb-0">Kozhikode, Kerala - 673308</p>
+                        <p class="mb-0">Contact: +91 9207253986 | Email: janaushadhikunhipally@gmail.com</p>
+                    </div>
+                </div>
+
+                <!-- 2. PATIENT & BILL METADATA -->
+                <div class="p-4 mb-4 information-block border border-dark">
+                    <div class="row align-items-center text-uppercase">
+                        <div class="col-7">
+                            <p class="mb-2 fw-bold">PATIENT: <span class="fw-normal text-dark ms-2">{{ order.patient_name }}</span></p>
+                            <p class="mb-0 fw-bold">MOBILE: <span class="fw-normal text-dark ms-2">+91 {{ order.mobile }}</span></p>
+                        </div>
+                        <div class="col-5 text-end">
+                            <p class="mb-2 fw-bold">BILL NO: <span class="fw-normal text-dark ms-2">{{ order.formatted_id }}</span></p>
+                            <p class="mb-0 fw-bold">DATE: <span class="fw-normal text-dark ms-2">{{ order.created_at|date:"d/m/Y" }}</span></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. MEDICINE TABLE -->
+                <div class="table-container mb-4">
+                    <table class="medicine-table w-100">
+                        <thead>
+                            <tr>
+                                <th style="width: 50px;">SL.</th>
+                                <th class="text-start ps-3">MEDICINE DESCRIPTION</th>
+                                <th style="width: 70px;">QTY</th>
+                                <th style="width: 110px;">MRP (Rs.)</th>
+                                <th style="width: 130px;">TOTAL (Rs.)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in order_items %}
+                            <tr>
+                                <td class="fw-semibold">{{ forloop.counter }}</td>
+                                <td class="text-start ps-3 text-uppercase">{{ item.medicine_name }}</td>
+                                <td>{{ item.quantity }}</td>
+                                <td>{{ item.price|floatformat:2 }}</td>
+                                <td class="text-end pe-3 fw-bold">{{ item.subtotal|floatformat:2 }}</td>
+                            </tr>
+                            {% endfor %}
+                            <tr class="grand-total-row">
+                                <td colspan="4" class="text-end pe-4 fw-bold text-uppercase">Grand Total Amount</td>
+                                <td class="text-end pe-3 fw-black">Rs.{{ total|floatformat:2 }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- 4. TERMS & FOOTER -->
+                <div class="text-center mt-5">
+                    <p class="mb-3 text-muted terms-text">
+                        <span class="fw-bold text-dark text-uppercase">Terms:</span> Medicines once sold will not be exchanged. Always consult your doctor before use.
+                    </p>
+                    <div class="fw-bold mb-1 text-dark thank-you-text">*** THANK YOU FOR CHOOSING JAN AUSHADHI ***</div>
+                    <p class="text-muted small mb-0">Quality Medicines at Genuine Rate</p>
+                    <p class="text-muted mt-5 system-gen-text">This is a system generated document. No physical signature required.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- DASHBOARD RETURN (HIDDEN IN PRINT) -->
+        <div class="text-center mt-4 d-print-none">
+            <a href="{% url 'admin_orders' %}" class="text-muted text-decoration-none fw-bold small text-uppercase ls-1">
+                <i class="fas fa-chevron-left me-2"></i> Return to Manage Orders
+            </a>
+        </div>
+
+    </div>
+</section>
+
+<style>
+    /* WEB ONLY STYLES */
+    .fw-black { font-weight: 900; }
+    .ls-1 { letter-spacing: 1.5px; }
+    .information-block { background-color: #f8f9fa; }
+    
+    .medicine-table { border-collapse: collapse; border: 2px solid #000; }
+    .medicine-table th { padding: 12px; border: 1px solid #000; background: #f8f9fb; font-size: 13px; font-weight: 700; }
+    .medicine-table td { padding: 12px; border: 1px solid #000; font-size: 13px; text-align: center; }
+    .grand-total-row td { background: #fdfdfd; font-size: 18px; border-top: 2.5px solid #000; }
+
+    .pharm-title { font-size: 26px; color: #1a2a44; }
+    .pharm-subtitle { font-size: 13px; color: #333; }
+    .pharm-address { font-size: 13px; color: #555; }
+
+    /* ========== CRITICAL PRINT OVERRIDES ========== */
+    @media print {
+        /* 1. SEIZE THE ENTIRE PAGE */
+        @page { size: portrait; margin: 0; }
+        
+        /* 2. COMPLETELY HIDE ALL NON-PRINT ELEMENTS AT THE ROOT */
+        body > :not(section), .admin-sidebar, .admin-topbar, .admin-footer, 
+        .d-print-none, nav, footer, aside, header { 
+            display: none !important; 
+            width: 0 !important; 
+            height: 0 !important; 
+            margin: 0 !important; 
+            padding: 0 !important; 
+        }
+
+        /* 3. NEUTRALIZE BODY & MAIN CONTAINERS (STOP SIDEBAR FROM SHIFTING) */
+        html, body, #wrapper, .admin-content, #page-content-wrapper, 
+        .content-wrapper, .container-fluid, section, main {
+            margin: 0 !important;
+            padding: 0 !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            min-width: 100% !important;
+            float: none !important;
+            position: absolute !important; /* Force out of any flex/grid parent */
+            left: 0 !important;
+            top: 0 !important;
+            transform: none !important;
+            background: white !important;
+            display: block !important;
+        }
+
+        /* 4. EXPAND AND CENTER THE BILL */
+        #printableBill {
+            max-width: 100% !important;
+            width: 100% !important;
+            margin: 0 !important;
+            padding: 1cm !important; /* Professional A4 margin */
+            border: none !important;
+            box-shadow: none !important;
+            display: block !important;
+        }
+
+        /* 5. FORCE BORDERS AND SHADING */
+        .medicine-table, .medicine-table th, .medicine-table td, .information-block {
+            border: 1px solid #000 !important;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+        }
+        .medicine-table { border: 2px solid #000 !important; width: 100% !important; }
+        .information-block { background-color: #f8f9fa !important; }
+        
+        /* 6. SCALE TEXT FOR READABILITY */
+        .pharm-title { font-size: 32px !important; margin-top: 0.5cm !important; }
+        .pharm-subtitle { font-size: 15px !important; }
+        .pharm-address { font-size: 14px !important; }
+        .medicine-table th, .medicine-table td { font-size: 15px !important; padding: 15px !important; }
+        .grand-total-row td { font-size: 22px !important; }
+        .thank-you-text { font-size: 18px !important; border-top: 1px dashed #ccc; padding-top: 1cm; }
+        
+        .fw-bold { font-weight: 700 !important; }
+    }
+</style>
+
+{% endblock %}

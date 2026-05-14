@@ -1,0 +1,246 @@
+{% extends 'admin/admin_base.html' %}
+{% block content %}
+
+<div class="container-fluid compact-dashboard">
+
+    <!-- ================= HEADER ================= -->
+    <div class="row mb-3 align-items-center">
+        <div class="col-md-8">
+            <h3 class="fw-bold text-dark mb-0">Dashboard Overview</h3>
+            <p class="text-muted mb-0 small-text">Operations and inventory monitoring at a glance.</p>
+        </div>
+        <div class="col-md-4 text-md-end mt-1 mt-md-0">
+            <span class="badge bg-soft-success text-success p-2 px-3 rounded-pill border border-success border-opacity-25 small-text">
+                <i class="fas fa-circle me-1" style="font-size: 0.6rem;"></i> System Live
+            </span>
+        </div>
+    </div>
+
+    <!-- ================= STAT CARDS ================= -->
+    <div class="row g-3 mb-3">
+
+        <div class="col-xl-3 col-md-6">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-3">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <div class="stat-icon-md bg-primary bg-opacity-10 text-primary">
+                            <i class="fas fa-capsules"></i>
+                        </div>
+                        <span class="text-success small-text fw-bold">+2.5% <i class="fas fa-arrow-up"></i></span>
+                    </div>
+                    <div>
+                        <h6 class="text-muted fw-medium mb-1 small-text">Total Medicines</h6>
+                        <h3 class="fw-bold mb-0">{{ total_medicines }}</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-3">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <div class="stat-icon-md bg-success bg-opacity-10 text-success">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <span class="text-muted small-text fw-bold">Active</span>
+                    </div>
+                    <div>
+                        <h6 class="text-muted fw-medium mb-1 small-text">Total Users</h6>
+                        <h3 class="fw-bold mb-0">{{ total_users }}</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-3">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <div class="stat-icon-md bg-warning bg-opacity-10 text-warning">
+                            <i class="fas fa-clock-rotate-left"></i>
+                        </div>
+                        <span class="badge bg-warning bg-opacity-25 text-warning rounded-pill px-2 small-text">Pending</span>
+                    </div>
+                    <div>
+                        <h6 class="text-muted fw-medium mb-1 small-text">Pending Orders</h6>
+                        <h3 class="fw-bold mb-0">{{ pending_orders }}</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-3">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <div class="stat-icon-md bg-danger bg-opacity-10 text-danger">
+                            <i class="fas fa-triangle-exclamation"></i>
+                        </div>
+                        <span class="text-danger small-text fw-bold">Alert</span>
+                    </div>
+                    <div>
+                        <h6 class="text-muted fw-medium mb-1 small-text">Low Stock</h6>
+                        <h3 class="fw-bold mb-0">{{ low_stock_count }}</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ================= SECOND ROW: CRITICAL ALERTS ================= -->
+    <div class="row g-3 mb-3">
+
+        <div class="col-md-6">
+            <div class="card border-0 shadow-sm overflow-hidden h-100">
+                <div class="row g-0 h-100">
+                    <div class="col-3 bg-danger bg-opacity-10 d-flex align-items-center justify-content-center">
+                        <i class="fas fa-calendar-times fa-2x text-danger opacity-25"></i>
+                    </div>
+                    <div class="col-9">
+                        <div class="card-body p-3">
+                            <h6 class="fw-bold text-dark mb-1">Expiry Monitoring</h6>
+                            <p class="text-muted small-text mb-2"><strong>{{ near_expiry_count }}</strong> items expiring within 30 days.</p>
+                            <a href="{% url 'admin_inventory' %}" class="btn btn-outline-danger btn-sm py-1 px-3 rounded-pill small-text">Analyze</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card border-0 shadow-sm overflow-hidden text-white h-100"
+                style="background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);">
+                <div class="card-body p-3">
+                    <div class="d-flex align-items-center gap-2 mb-2">
+                        <div class="bg-white bg-opacity-20 p-2 rounded-circle">
+                            <i class="fas fa-shield-halved"></i>
+                        </div>
+                        <h6 class="fw-bold mb-0">System Health</h6>
+                    </div>
+                    <p class="mb-2 opacity-75 small-text">Billing, Inventory, and Users are performing optimally.</p>
+                    <div class="d-flex align-items-center gap-2">
+                        <div class="spinner-grow spinner-grow-sm text-white" style="width: 10px; height: 10px;" role="status"></div>
+                        <span class="small-text fw-medium">Real-time health active</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ================= MODULE QUICK ACCESS ================= -->
+    <h6 class="fw-bold text-dark mb-2 mt-1 small-text text-uppercase ls-1">Management Hub</h6>
+    <div class="row g-3">
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm text-center p-3 h-100">
+                <div class="stat-icon-md bg-primary bg-opacity-10 text-primary mx-auto mb-2">
+                    <i class="fas fa-prescription-bottle-medical"></i>
+                </div>
+                <h6 class="fw-bold mb-1">Medicines</h6>
+                <p class="text-muted small-text mb-3">Details and categories.</p>
+                <a href="{% url 'admin_medicines' %}" class="btn btn-primary d-block rounded-pill py-2 small-text">Manage</a>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm text-center p-3 h-100">
+                <div class="stat-icon-md bg-success bg-opacity-10 text-success mx-auto mb-2">
+                    <i class="fas fa-warehouse"></i>
+                </div>
+                <h6 class="fw-bold mb-1">Inventory</h6>
+                <p class="text-muted small-text mb-3">Monitor stock levels.</p>
+                <a href="{% url 'admin_inventory' %}" class="btn btn-success d-block rounded-pill py-2 small-text text-white">Update</a>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm text-center p-3 h-100">
+                <div class="stat-icon-md bg-dark bg-opacity-10 text-dark mx-auto mb-2">
+                    <i class="fas fa-file-invoice"></i>
+                </div>
+                <h6 class="fw-bold mb-1">Orders</h6>
+                <p class="text-muted small-text mb-3">Process requests.</p>
+                <a href="{% url 'admin_orders' %}" class="btn btn-dark d-block rounded-pill py-2 small-text">Review</a>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm text-center p-3 h-100">
+                <div class="stat-icon-md bg-info bg-opacity-10 text-info mx-auto mb-2">
+                    <i class="fas fa-walking"></i>
+                </div>
+                <h6 class="fw-bold mb-1">Walk-in</h6>
+                <p class="text-muted small-text mb-3">Counter billing.</p>
+                <a href="{% url 'walkin_order' %}" class="btn btn-info text-white d-block rounded-pill py-2 small-text">New</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= NOTIFICATIONS ================= -->
+    {% if low_stock_count > 0 or near_expiry_count > 0 %}
+    <div class="alert mt-3 border-0 shadow-sm bg-white p-3 mb-0" style="border-left: 5px solid #ffc107 !important;">
+        <div class="d-flex align-items-center gap-3">
+            <div class="bg-warning bg-opacity-10 text-warning p-2 px-3 rounded-circle">
+                <i class="fas fa-bell"></i>
+            </div>
+            <div class="flex-grow-1">
+                <h6 class="fw-bold text-dark mb-0 small-text">Attention Required</h6>
+                <p class="text-muted small-text mb-0">System has detected <strong>{{ low_stock_count }}</strong> low stock items and <strong>{{ near_expiry_count }}</strong> expiring medicines.</p>
+            </div>
+            <div>
+                <a href="{% url 'admin_inventory' %}" class="btn btn-warning btn-sm text-white px-4 rounded-pill small-text py-1">Resolve Now</a>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+</div>
+
+<script>
+    // Tag the body for admin-wide global compaction on this page
+    document.body.classList.add('compact-admin-body');
+</script>
+
+<style>
+    .bg-soft-success { background-color: #ecfdf5; }
+    .small-text { font-size: 0.75rem; }
+    .ls-1 { letter-spacing: 0.05rem; }
+    
+    .stat-icon-md {
+        width: 42px;
+        height: 42px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.1rem;
+    }
+
+    /* Target the admin base wrapper and footer with balanced paddings */
+    .compact-admin-body .content-wrapper {
+        padding: 1.25rem !important;
+    }
+    .compact-admin-body header.admin-topbar {
+        padding-top: 0.5rem !important;
+        padding-bottom: 0.5rem !important;
+    }
+    .compact-admin-body footer {
+        margin-top: 1.5rem !important;
+        padding-top: 1rem !important;
+        padding-bottom: 1rem !important;
+    }
+    
+    .compact-dashboard .card {
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .compact-dashboard .card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.08) !important;
+    }
+</style>
+
+
+
+{% endblock %}

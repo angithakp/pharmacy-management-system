@@ -1,0 +1,129 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<section class="py-5 bg-light" style="min-height: 85vh;">
+    <div class="container animate-up">
+        
+        <div class="chat-container-modern shadow-lg rounded-4 overflow-hidden border mx-auto">
+            <!-- CHAT HEADER -->
+            <div class="chat-header p-4 bg-white border-bottom d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="stat-icon bg-primary-light text-primary rounded-circle d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                        <i class="fas fa-user-doctor"></i>
+                    </div>
+                    <div>
+                        <h5 class="fw-black text-dark mb-0 ls-1">PMBJK HELP DESK</h5>
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="status-dot"></span>
+                            <span class="extra-small fw-bold text-success text-uppercase">Pharmacist Online</span>
+                        </div>
+                    </div>
+                </div>
+                <a href="{% url 'home' %}" class="btn btn-sm btn-outline-secondary rounded-pill px-3 fw-bold">
+                    <i class="fas fa-xmark"></i>
+                </a>
+            </div>
+
+            <!-- CHAT BODY -->
+            <div class="chat-body p-4 bg-light" id="chatBody" style="height: 60vh; overflow-y: auto;">
+                {% if user_messages_list %}
+                    {% for msg in user_messages_list %}
+                        
+                        <!-- USER MESSAGE (SENDER) -->
+                        <div class="d-flex flex-column align-items-end mb-4 animate-up">
+                            <div class="chat-bubble-sender p-3 rounded-4 shadow-sm bg-primary text-white mb-1" style="max-width: 80%;">
+                                {{ msg.message }}
+                            </div>
+                            <span class="extra-small text-muted fw-bold">{{ msg.created_at|date:"h:i A" }}</span>
+                        </div>
+
+                        <!-- PHARMACIST REPLY (RECEIVER) -->
+                        {% if msg.reply %}
+                        <div class="d-flex flex-column align-items-start mb-4 animate-up">
+                            <div class="extra-small text-primary fw-black text-uppercase ls-1 mb-1 ms-2">Official Response</div>
+                            <div class="chat-bubble-receiver p-3 rounded-4 shadow-sm bg-white border mb-1" style="max-width: 80%;">
+                                {{ msg.reply }}
+                            </div>
+                            <span class="extra-small text-muted fw-bold ms-2">Verified Professional Reply</span>
+                        </div>
+                        {% endif %}
+
+                    {% endfor %}
+                {% else %}
+                    <div class="h-100 d-flex flex-column align-items-center justify-content-center text-center p-5">
+                        <div class="stat-icon bg-white text-muted mx-auto mb-4 d-flex align-items-center justify-content-center rounded-circle border" style="width: 80px; height: 80px; font-size: 2.5rem;">
+                            <i class="fas fa-comments-medical"></i>
+                        </div>
+                        <h4 class="fw-black text-dark mb-2">Private Consultation</h4>
+                        <p class="text-muted small mb-0">Ask our licensed pharmacists about medicine availability, generic substitutes, or order status.</p>
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- FOOTER NOTICE -->
+            <div class="p-3 bg-white border-top text-center">
+                <p class="extra-small text-muted mb-0">
+                    <i class="fas fa-shield-halved me-1"></i> These messages are encrypted and viewed only by authorized medical staff.
+                </p>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+<script>
+    // Auto scroll to bottom
+    const chatBody = document.getElementById('chatBody');
+    if (chatBody) chatBody.scrollTop = chatBody.scrollHeight;
+</script>
+
+<style>
+    .chat-container-modern {
+        max-width: 700px;
+        background: white;
+    }
+    
+    .ls-1 { letter-spacing: 0.1rem; }
+    .extra-small { font-size: 0.75rem; }
+    .fw-black { font-weight: 900; }
+    .bg-primary-light { background-color: var(--primary-light); }
+    
+    .status-dot {
+        width: 8px;
+        height: 8px;
+        background-color: #10b981;
+        border-radius: 50%;
+        display: inline-block;
+        animation: pulse-dot 2s infinite;
+    }
+    
+    @keyframes pulse-dot {
+        0%, 100% { transform: scale(1); opacity: 1; }
+        50% { transform: scale(1.3); opacity: 0.7; }
+    }
+    
+    .chat-bubble-sender {
+        border-bottom-right-radius: 4px !important;
+        background: linear-gradient(135deg, var(--primary) 0%, #312e81 100%);
+    }
+    
+    .chat-bubble-receiver {
+        border-bottom-left-radius: 4px !important;
+    }
+    
+    .chat-body::-webkit-scrollbar {
+        width: 6px;
+    }
+    
+    .chat-body::-webkit-scrollbar-track {
+        background: transparent;
+    }
+    
+    .chat-body::-webkit-scrollbar-thumb {
+        background: rgba(0,0,0,0.1);
+        border-radius: 10px;
+    }
+</style>
+
+{% endblock %}

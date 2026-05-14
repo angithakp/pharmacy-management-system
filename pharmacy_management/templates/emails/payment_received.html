@@ -1,0 +1,56 @@
+{% extends 'emails/base_email.html' %}
+{% block email_content %}
+<div style="margin-bottom: 40px; text-align: left;">
+    <span class="status-pill" style="background-color: #f0fdf4; color: #10b981;">PAYMENT CONFIRMED</span>
+    <h2 style="margin: 0; font-size: 28px; font-weight: 800; color: #0f172a; letter-spacing: -0.02em;">Payment
+        Successfully Received</h2>
+    <p style="margin: 6px 0 0 0; font-size: 15px; color: #64748b;">
+        <strong>Reference ID:</strong> {{ order.formatted_id }} | <strong>Transaction Verified</strong>
+    </p>
+</div>
+<p style="margin-top: 0; font-size: 17px; color: #1e293b; font-weight: 700;">Hello {{ patient_name|default:"Patient" }},
+</p>
+<p style="line-height: 1.7; color: #475569; font-size: 15px;">
+    We have successfully processed your payment for order <strong>{{ order.formatted_id }}</strong>. Your medicines are now being
+    prioritized for clinical packing and quality inspection before handover.
+</p>
+<div class="highlight-card" style="background-color: #f8fafc; border: 1px solid #10b981; padding: 35px;">
+    <div
+        style="color: #047857; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 25px; border-bottom: 1px solid #d1fae5; padding-bottom: 15px;">
+        Official Receipt Transcript</div>
+    <table style="width: 100%; border-collapse: collapse; font-size: 16px;">
+        <tr>
+            <td style="padding: 12px 0; color: #64748b; border-bottom: 1px solid #f1f5f9;">Billing Reference</td>
+            <td
+                style="padding: 12px 0; color: #1e293b; font-weight: 700; text-align: right; border-bottom: 1px solid #f1f5f9;">
+                {{ order.formatted_id }}</td>
+        </tr>
+        <tr>
+            <td style="padding: 12px 0; color: #64748b; border-bottom: 1px solid #f1f5f9;">Net Amount Paid</td>
+            <td
+                style="padding: 12px 0; color: #10b981; font-weight: 800; text-align: right; border-bottom: 1px solid #f1f5f9; font-size: 20px;">
+                Rs. {{ order.total_amount|floatformat:2 }}
+            </td>
+        </tr>
+        <tr>
+            <td style="padding: 12px 0; color: #64748b;">Settlement Date</td>
+            <td style="padding: 12px 0; color: #1e293b; font-weight: 700; text-align: right;">
+                {{ order.payment_date|date:"d M Y, H:i A" }}
+            </td>
+        </tr>
+    </table>
+</div>
+<p style="text-align: center; color: #475569; font-size: 15px; line-height: 1.7; margin: 40px 0;">
+    Our pharmacy unit is currently packing your order following strict medical hygiene standards. You will receive a
+    dispatch notification shortly.
+</p>
+<div style="text-align: center;">
+    <a href="http://127.0.0.1:8000/order-tracking/{{ order_id }}/" class="btn"
+        style="background-color: #10b981; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);">Track Packaging Progress</a>
+</div>
+<div style="text-align: center; margin-top: 50px; padding: 30px; border-top: 1px solid #e2e8f0;">
+    <p style="font-size: 13px; color: #94a3b8; line-height: 1.6; margin: 0;">
+        Thank you for trusting <strong>Janaushadhi Kunhipally</strong>. Quality medical care is our commitment to you.
+    </p>
+</div>
+{% endblock %}

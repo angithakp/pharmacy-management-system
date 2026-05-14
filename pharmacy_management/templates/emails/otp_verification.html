@@ -1,0 +1,45 @@
+{% extends 'emails/base_email.html' %}
+{% block email_content %}
+
+<div style="margin-bottom: 40px; text-align: center;">
+    <span class="status-pill"
+        style="background-color: #f1f5f9; color: #1a4a8d; display: inline-block; padding: 8px 18px; border-radius: 100px; font-weight: 700; font-size: 12px; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 20px;">SECURITY
+        VERIFICATION</span>
+    <h2 style="margin: 0; font-size: 28px; font-weight: 800; color: #0f172a; letter-spacing: -0.02em;">Verify Your
+        Identity</h2>
+    <p style="margin: 6px 0 0 0; font-size: 15px; color: #64748b;">One-Time Password (OTP) Required</p>
+</div>
+
+<p style="margin-top: 0; font-size: 17px; color: #1e293b; font-weight: 700;">Hello {{ patient_name|default:"Patient" }},
+</p>
+<p style="line-height: 1.7; color: #475569; font-size: 15px;">
+    To proceed with your medical request at <strong>Janaushadhi Kendra Kunhipally</strong>, please use the secure
+    verification code provided below. This code will expire in 10 minutes.
+</p>
+
+<div style="text-align: center; margin: 40px 0;">
+    <div
+        style="background-color: #f8fafc; border: 2px dashed #e2e8f0; border-radius: 20px; padding: 40px; display: inline-block;">
+        <span
+            style="display: block; font-size: 11px; font-weight: 800; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.2em; margin-bottom: 15px;">Your
+            Secure Code</span>
+        <div
+            style="font-family:'Courier New',Courier,monospace; font-size:48px; font-weight:800; color:#1a4a8d; letter-spacing:12px; line-height:1; margin:0 auto; display:block;">
+            {{ otp }}
+        </div>
+    </div>
+</div>
+
+<div
+    style="background-color: #fff7ed; border-left: 4px solid #f97316; padding: 25px; border-radius: 16px; margin: 30px 0;">
+    <p style="margin: 0; font-size: 14px; color: #9a3412; line-height: 1.6;">
+        <strong>Security Tip:</strong> Never share your verification code with anyone, including pharmacy staff. We will
+        never ask for your OTP over phone or WhatsApp.
+    </p>
+</div>
+
+<p style="font-size: 14px; color: #64748b; margin-top: 40px; line-height: 1.7; text-align: center;">
+    If you did not initiate this request, please ignore this email or contact our support team immediately.
+</p>
+
+{% endblock %}

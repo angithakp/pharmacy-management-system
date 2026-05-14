@@ -1,0 +1,142 @@
+{% extends 'admin/admin_base.html' %}
+{% block content %}
+
+<div class="container-fluid px-0">
+
+    <!-- ================= PAGE HEADER ================= -->
+    <div class="row mb-5 align-items-center">
+        <div class="col-md-8">
+            <h2 class="fw-bold text-dark mb-1">Prescription Orders</h2>
+            <p class="text-muted mb-0">Review prescriptions, process billing, and manage order fulfillment.</p>
+        </div>
+        <div class="col-md-4 text-md-end mt-3 mt-md-0">
+            <span class="badge bg-primary bg-opacity-10 text-primary p-2 px-3 rounded-pill">
+                <i class="fas fa-inbox me-1"></i> {{ orders|length }} Total Orders
+            </span>
+        </div>
+    </div>
+
+    <!-- ================= TABLE CARD ================= -->
+    <div class="card border-0 shadow-sm">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table admin-table mb-0">
+                    <thead>
+                        <tr>
+                            <th class="ps-4">Order ID</th>
+                            <th>Patient Details</th>
+                            <th>Status</th>
+                            <th>Payment Info</th>
+                            <th class="text-end pe-4">Fulfillment Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for order in orders %}
+                        <tr>
+                            <td class="ps-4">
+                                <span class="fw-bold text-dark">{{ order.formatted_id }}</span>
+                                <div class="extra-small text-muted">{{ order.created_at|date:"d M, Y" }}</div>
+                            </td>
+
+                            <td>
+                                <div class="d-flex align-items-center gap-2">
+                                    <div class="fw-semibold text-dark">{{ order.patient_name }}</div>
+                                    {% if not order.user %}
+                                    <span
+                                        class="badge bg-info bg-opacity-10 text-info extra-small border border-info border-opacity-25 rounded-pill px-2">Walk-in</span>
+                                    {% endif %}
+                                </div>
+                                <div class="small text-muted">
+                                    <i class="fas fa-phone-alt me-1 small"></i> {{ order.mobile }}
+                                </div>
+                            </td>
+
+                            <td>
+                                <span class="badge status-chip 
+                                    {% if order.status == 'submitted' %}status-submitted
+                                    {% elif order.status == 'verified' %}status-verified
+                                    {% elif order.status == 'billed' %}status-billed
+                                    {% elif order.status == 'paid' %}status-paid
+                                    {% elif order.status == 'delivered' %}bg-dark bg-opacity-10 text-dark
+                                    {% elif order.status == 'rejected' or order.status == 'cancelled' %}bg-danger bg-opacity-10 text-danger
+                                    {% else %}status-submitted{% endif %}">
+                                    {{ order.get_status_display }}
+                                </span>
+                            </td>
+
+                            <td>
+                                {% if order.payment_date %}
+                                <div class="small fw-semibold text-success">₹{{ order.total_amount|floatformat:2 }}
+                                </div>
+                                <div class="extra-small text-muted">Paid on {{ order.payment_date|date:"d M, H:i" }}
+                                </div>
+                                {% elif order.total_amount %}
+                                <div class="small fw-semibold text-dark">₹{{ order.total_amount|floatformat:2 }}</div>
+                                <div class="extra-small text-muted">Awaiting Payment</div>
+                                {% else %}
+                                <span class="text-muted small">Not billed yet</span>
+                                {% endif %}
+                            </td>
+
+                            <td class="text-end pe-4">
+                                <div class="dropdown">
+                                    <button class="btn btn-light btn-sm rounded-pill px-3 dropdown-toggle shadow-sm"
+                                        type="button" data-bs-toggle="dropdown">
+                                        Actions
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-end border-0 shadow-lg mt-2 py-2"
+                                        style="border-radius: 12px;">
+                                        <li><a class="dropdown-item py-2"
+                                                href="{% url 'admin_order_detail' order.id %}"><i
+                                                    class="fas fa-eye me-2 text-primary"></i> View Detail</a></li>
+                                        <li><a class="dropdown-item py-2"
+                                                href="{% url 'admin_order_update' order.id %}"><i
+                                                    class="fas fa-edit me-2 text-warning"></i> Update Status</a></li>
+                                        <li><a class="dropdown-item py-2"
+                                                href="{% url 'admin_generate_bill' order.id %}"><i
+                                                    class="fas fa-file-invoice me-2 text-success"></i> Generate Bill</a>
+                                        </li>
+                                        <li>
+                                            <hr class="dropdown-divider mx-2">
+                                        </li>
+                                        <li><a class="dropdown-item py-2" href="{% url 'admin_billing' order.id %}"><i
+                                                    class="fas fa-print me-2 text-dark"></i> Print Preview</a></li>
+                                        <li><hr class="dropdown-divider mx-2"></li>
+                                        <li><a class="dropdown-item py-2 text-danger" href="{% url 'admin_delete_order' order.id %}" onclick="return confirm('Are you sure you want to delete Order {{ order.formatted_id }}? This action cannot be undone.')">
+                                            <i class="fas fa-trash-alt me-2"></i> Delete Order
+                                        </a></li>
+                                    </ul>
+                                </div>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5" class="text-center py-5">
+                                <div class="text-muted">
+                                    <i class="fas fa-clipboard-list fa-3x mb-3 opacity-20"></i>
+                                    <p>No prescription orders have been placed yet.</p>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<style>
+    .extra-small {
+        font-size: 0.75rem;
+    }
+
+    .status-chip {
+        text-transform: none;
+        letter-spacing: normal;
+        padding: 0.5rem 0.8rem !important;
+    }
+</style>
+
+{% endblock %}

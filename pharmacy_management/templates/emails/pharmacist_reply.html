@@ -1,0 +1,25 @@
+{% extends "emails/base_email.html" %}
+
+{% block email_content %}
+<div style="padding: 30px; background-color: #ffffff; border-radius: 12px;">
+    <h2 style="color: #4f46e5; margin-top: 0; font-weight: 800;">Response to Your Message</h2>
+    
+    <p style="color: #4b5563; font-size: 16px; line-height: 1.6;">Hello <strong>{{ name }}</strong>,</p>
+    
+    <p style="color: #4b5563; font-size: 16px; line-height: 1.6;">Our pharmacist has reviewed your inquiry and sent a response.</p>
+
+    <!-- Message Recap -->
+    <div style="background-color: #f9fafb; border-left: 4px solid #e5e7eb; padding: 15px; margin: 25px 0; border-radius: 8px;">
+        <p style="margin: 0; font-size: 12px; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700;">Your Message:</p>
+        <p style="margin: 8px 0 0; font-style: italic; color: #374151;">"{{ message_text }}"</p>
+    </div>
+
+    <!-- Official Response -->
+    <div style="background-color: #f5f3ff; border: 1px solid #ddd6fe; padding: 25px; margin: 25px 0; border-radius: 16px;">
+        <p style="margin: 0; font-size: 12px; color: #7c3aed; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700;">Official Response:</p>
+        <p style="margin: 12px 0 0; color: #1e1b4b; font-size: 16px; line-height: 1.8; white-space: pre-wrap;">{{ reply_text }}</p>
+    </div>
+
+    <p style="color: #4b5563; font-size: 14px; margin-top: 30px;">If you have more questions, feel free to visit our store or message us again through the portal.</p>
+</div>
+{% endblock %}

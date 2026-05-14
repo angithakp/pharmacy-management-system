@@ -1,0 +1,46 @@
+{% extends 'emails/base_email.html' %}
+{% block email_content %}
+
+<div style="margin-bottom: 40px; text-align: left;">
+    <span class="status-pill" style="background-color: #fffbeb; color: #d97706;">INVENTORY UPDATE</span>
+    <h2 style="margin: 0; font-size: 28px; font-weight: 800; color: #0f172a; letter-spacing: -0.02em;">Medicine
+        Availability</h2>
+    <p style="margin: 6px 0 0 0; font-size: 15px; color: #64748b;">Update for Manifest {{ order.formatted_id }}</p>
+</div>
+
+<p style="margin-top: 0; font-size: 17px; color: #1e293b; font-weight: 700;">Hello {{ patient_name|default:"Patient" }},
+</p>
+<p style="line-height: 1.7; color: #475569; font-size: 15px;">
+    During the review of order
+    <strong>{{ order.formatted_id }}</strong>
+    at <strong>Janaushadhi Kendra Kunhipally</strong>, our pharmacist noticed that some items in your manifest are
+    currently out of stock.
+</p>
+
+<div class="highlight-card" style="background-color: #fffbeb; border: 1px solid #fef3c7; padding: 35px;">
+    <h4
+        style="margin: 0 0 15px 0; color: #92400e; font-size: 13px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em;">
+        Stock Status Notice</h4>
+    <p style="margin: 0; color: #b45309; font-size: 15px; line-height: 1.6; font-weight: 600;">
+        {{ reason|default:"One or more items are currently unavailable in our inventory." }}
+    </p>
+</div>
+
+<div style="margin: 40px 0; padding: 30px; background-color: #f8fafc; border-radius: 20px; border: 1px solid #e2e8f0;">
+    <h6 style="margin: 0 0 12px 0; font-weight: 800; color: #1e293b;">Inventory Restock Timeline:</h6>
+    <p style="margin: 0; color: #64748b; font-size: 14px; line-height: 1.8;">
+        We replenish our stocks every 2-3 business days. You can check back shortly or browse for alternative generic
+        medicines available in our store.
+    </p>
+</div>
+
+<div style="text-align: center; margin-top: 45px;">
+    <a href="http://127.0.0.1:8000/medicines/" class="btn"
+        style="background-color: #d97706; box-shadow: 0 4px 12px rgba(217, 119, 6, 0.2);">Browse Alternatives</a>
+    <p style="margin: 20px 0 0 0; font-size: 13px; color: #94a3b8; line-height: 1.5;">
+        You will receive another notification as soon as these medicines
+        are back in our dispensing queue.
+    </p>
+</div>
+
+{% endblock %}

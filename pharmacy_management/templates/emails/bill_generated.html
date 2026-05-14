@@ -1,0 +1,101 @@
+{% extends 'emails/base_email.html' %}
+{% block email_content %}
+
+<div style="margin-bottom: 40px; text-align: left;">
+    <span class="status-pill" style="background-color: #f0fdf4; color: #10b981;">BILLING READY</span>
+    <h2 style="margin: 0; font-size: 28px; font-weight: 800; color: #0f172a; letter-spacing: -0.02em;">Digital Bill
+        Generated</h2>
+    <p style="margin: 6px 0 0 0; font-size: 15px; color: #64748b;">
+        <strong>Order ID:</strong> {{ order.formatted_id }} | <strong>Status:</strong> Awaiting Payment
+    </p>
+</div>
+
+<p style="margin-top: 0; font-size: 17px; color: #1e293b; font-weight: 700;">Hello {{ patient_name|default:"Patient" }},
+</p>
+<p style="line-height: 1.7; color: #475569; font-size: 15px;">
+    Good news! Your order verification is successful. We have generated the final electronic bill for order <strong>{{ order.formatted_id }}</strong>. Please complete the payment to initiate dispensing and shipping.
+</p>
+
+<div class="highlight-card"
+    style="background-color: #f8fafc; border: 1px solid #e2e8f0; padding: 35px; border-radius: 20px; margin: 30px 0;">
+    <div
+        style="color: #64748b; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 25px; border-bottom: 1px solid #cbd5e1; padding-bottom: 15px;">
+        Order Value Summary</div>
+    <table style="width: 100%; font-size: 15px; border-collapse: collapse;">
+        <tr>
+            <td style="padding: 12px 0; color: #475569;">Medicine Subtotal</td>
+            <td style="padding: 12px 0; color: #1e293b; font-weight: 700; text-align: right;">Rs. {{ subtotal|floatformat:2 }}</td>
+        </tr>
+        <tr>
+            <td style="padding: 12px 0; color: #475569; border-bottom: 1px solid #e2e8f0; padding-bottom: 18px;">
+                Applicable GST (5%)</td>
+            <td
+                style="padding: 12px 0; color: #1e293b; font-weight: 700; text-align: right; border-bottom: 1px solid #e2e8f0; padding-bottom: 18px;">
+                Rs. {{ gst|floatformat:2 }}</td>
+        </tr>
+        <tr>
+            <td style="padding: 25px 0 0 0; color: #1e293b; font-weight: 800; font-size: 18px;">Net Amount Payable</td>
+            <td style="padding: 25px 0 0 0; color: #10b981; font-weight: 800; font-size: 32px; text-align: right;">Rs.
+                {{ order.total_amount|floatformat:2 }}</td>
+        </tr>
+    </table>
+</div>
+
+<h3
+    style="font-size: 13px; font-weight: 800; color: #1e293b; margin: 40px 0 15px 0; text-transform: uppercase; letter-spacing: 0.1em;">
+    Verified Medicine List</h3>
+<table class="table-manifest"
+    style="width: 100%; border-collapse: separate; border-spacing: 0; margin: 30px 0; border-radius: 16px; overflow: hidden; border: 1px solid #e2e8f0;">
+    <thead>
+        <tr style="background-color: #f8fafc;">
+            <th
+                style="padding: 14px 20px; text-align: left; font-size: 11px; font-weight: 700; text-transform: uppercase; color: #64748b; letter-spacing: 0.05em; border-bottom: 1px solid #e2e8f0; width: 60%;">
+                Medicine Name</th>
+            <th
+                style="padding: 14px 20px; text-align: center; font-size: 11px; font-weight: 700; text-transform: uppercase; color: #64748b; letter-spacing: 0.05em; border-bottom: 1px solid #e2e8f0; width: 15%;">
+                Qty</th>
+            <th
+                style="padding: 14px 20px; text-align: right; font-size: 11px; font-weight: 700; text-transform: uppercase; color: #64748b; letter-spacing: 0.05em; border-bottom: 1px solid #e2e8f0; width: 25%;">
+                Amount</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for item in items %}
+        <tr>
+            <td
+                style="padding: 18px 20px; border-bottom: 1px solid #f1f5f9; font-size: 14px; color: #1e293b; font-weight: 600;">
+                {{ item.medicine_name }}</td>
+            <td
+                style="padding: 18px 20px; border-bottom: 1px solid #f1f5f9; font-size: 14px; text-align: center; color: #64748b; font-weight: 600;">
+                {{ item.quantity }}</td>
+            <td
+                style="padding: 18px 20px; border-bottom: 1px solid #f1f5f9; font-size: 14px; text-align: right; color: #1a4a8d; font-weight: 700;">
+                Rs. {{ item.subtotal|floatformat:2 }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% if payment_qr %}
+<div
+    style="text-align: center; margin: 45px 0; padding: 25px; background: #ffffff; border: 2px dashed #10b981; border-radius: 28px;">
+    <p
+        style="margin: 0 0 20px 0; font-weight: 800; color: #1e293b; text-transform: uppercase; font-size: 12px; letter-spacing: 0.15em;">
+        Scan & Pay Securely via UPI</p>
+    <div
+        style="background-color: #f8fafc; padding: 20px; display: inline-block; border-radius: 20px; border: 1px solid #e2e8f0; margin-bottom: 20px; max-width: 90%; box-sizing: border-box;">
+        <img src="cid:payment_qr" alt="Payment QR Code" style="width: 100%; max-width: 200px; height: auto; display: block; margin: 0 auto;">
+    </div>
+    <p style="margin-bottom: 8px; font-size: 18px; font-weight: 800; color: #0f172a;">UPI Payment Gateway Active</p>
+    <p style="margin: 0; font-size: 13px; color: #64748b;">Scan with Google Pay, PhonePe, Paytm or any BHIM UPI App</p>
+</div>
+{% endif %}
+
+<div style="text-align: center; margin-top: 45px;">
+    <a href="{{ local_payment_url }}" class="btn" style="background-color: #10b981; text-decoration: none; display: inline-block; padding: 15px 30px; color: #ffffff; border-radius: 12px; font-weight: 700;">Complete Secure Payment</a>
+    <p style="margin: 20px 0 0 0; font-size: 13px; color: #94a3b8; line-height: 1.5;">
+        All transactions are encrypted and secured. You will receive a confirmation receipt immediately after payment.
+    </p>
+</div>
+
+{% endblock %}

@@ -1,0 +1,277 @@
+{% extends 'admin/admin_base.html' %}
+{% block content %}
+
+<div class="container-fluid">
+
+    <!-- ================= PAGE HEADER ================= -->
+    <div class="row mb-5 align-items-center">
+        <div class="col-md-6">
+            <h2 class="fw-bold text-dark mb-1">Financial Intelligence</h2>
+            <p class="text-muted mb-0">Overview of pharmacy revenue, sales performance, and payment analytics.</p>
+        </div>
+        <div class="col-md-6 text-md-end mt-3 mt-md-0">
+            <div class="d-flex flex-wrap justify-content-md-end gap-3">
+                {% if is_filtered %}
+                <a href="{% url 'admin_reports' %}" class="btn btn-light rounded-pill px-4 py-2 shadow-sm border-0 fw-bold text-dark" style="background-color: #f1f3f5;">
+                    <i class="fas fa-undo-alt me-2"></i>Reset
+                </a>
+                {% endif %}
+                <a href="{% url 'export_report_pdf' %}{% if is_filtered %}?start_date={{ start_date }}&end_date={{ end_date }}{% endif %}" class="btn btn-outline-primary rounded-pill px-4 py-2 shadow-sm fw-bold">
+                    <i class="fas fa-file-pdf me-2"></i>Export PDF
+                </a>
+                <button class="btn btn-primary rounded-pill px-4 py-2 shadow-sm fw-bold border-0" data-bs-toggle="modal" data-bs-target="#dateRangeModal" style="background: linear-gradient(135deg, #0d6efd 0%, #0a58ca 100%);">
+                    <i class="fas fa-calendar-check me-2"></i>Custom Range
+                </button>
+            </div>
+        </div>
+    </div>
+
+    {% if is_filtered %}
+    <div class="alert bg-white border-0 shadow-sm rounded-4 p-3 mb-5 d-flex align-items-center">
+        <div class="bg-primary bg-opacity-10 text-primary rounded-circle p-2 me-3">
+            <i class="fas fa-filter"></i>
+        </div>
+        <div>
+            <span class="text-muted small d-block">FILTERED RANGE</span>
+            <span class="fw-bold text-dark">{{ start_date }} to {{ end_date }}</span>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- ================= SUMMARY CARDS ================= -->
+    <div class="row g-4 mb-5">
+        <div class="col-lg-3 col-md-6">
+            <div class="card border-0 shadow-sm overflow-hidden h-100">
+                <div class="card-body p-4 border-start border-success border-4">
+                    <h6 class="text-muted fw-bold mb-1">{% if is_filtered %}Period Revenue{% else %}Gross Revenue{% endif %}</h6>
+                    <h3 class="fw-bold mb-0 text-dark">₹{{ total_revenue|floatformat:2 }}</h3>
+                    <div class="mt-2 small text-success"><i class="fas fa-arrow-up me-1"></i> {% if is_filtered %}Total for range{% else %}Lifetime Earnings{% endif %}</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+            <div class="card border-0 shadow-sm overflow-hidden h-100">
+                <div class="card-body p-4 border-start border-primary border-4">
+                    <h6 class="text-muted fw-bold mb-1">{% if is_filtered %}Net (Period){% else %}Net (Today){% endif %}</h6>
+                    <h3 class="fw-bold mb-0 text-primary">₹{{ today_revenue|floatformat:2 }}</h3>
+                    <div class="mt-2 small text-muted"><i class="fas fa-clock me-1"></i> {% if is_filtered %}Selected Range{% else %}Last 24 hours{% endif %}</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+            <div class="card border-0 shadow-sm overflow-hidden h-100">
+                <div class="card-body p-4 border-start border-info border-4">
+                    <h6 class="text-muted fw-bold mb-1">Settled Orders</h6>
+                    <h3 class="fw-bold mb-0 text-info">{{ total_paid_orders }}</h3>
+                    <div class="mt-2 small text-muted"><i class="fas fa-check-double me-1"></i> Payment confirmed</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+            <div class="card border-0 shadow-sm overflow-hidden h-100">
+                <div class="card-body p-4 border-start border-dark border-4">
+                    <h6 class="text-muted fw-bold mb-1">Active SKUs</h6>
+                    <h3 class="fw-bold mb-0 text-dark">{{ total_medicines }}</h3>
+                    <div class="mt-2 small text-muted"><i class="fas fa-boxes me-1"></i> In inventory</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="row g-4 mb-5">
+        <!-- MONTHLY CHART AREA -->
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-white border-0 py-3 ps-4">
+                    <h5 class="fw-bold text-dark mb-0">Revenue Lifecycle</h5>
+                </div>
+                <div class="card-body px-0">
+                    <div class="table-responsive">
+                        <table class="table admin-table mb-0">
+                            <thead>
+                                <tr>
+                                    <th class="ps-4">Billing Cycle</th>
+                                    <th>Transactions</th>
+                                    <th class="text-end pe-4">Revenue</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for data in monthly_data %}
+                                <tr>
+                                    <td class="ps-4">
+                                        <div class="fw-bold">{{ data.month|date:"F Y" }}</div>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-light text-dark rounded-pill px-3">{{ data.total_orders }}
+                                            Orders</span>
+                                    </td>
+                                    <td class="text-end pe-4 text-success fw-bold">
+                                        ₹{{ data.total_revenue|floatformat:2 }}
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="3" class="text-center py-5 text-muted">No historical data available.
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PAYMENT METHODS -->
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-white border-0 py-3 ps-4">
+                    <h5 class="fw-bold text-dark mb-0">Settlement Split</h5>
+                </div>
+                <div class="card-body p-4">
+                    <div class="mb-4">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="fw-bold text-dark">Digital (Online)</span>
+                            <div class="text-end">
+                                <span class="d-block text-dark fw-bold">₹{{ razorpay_revenue|floatformat:2 }}</span>
+                                <span class="small text-muted">{{ razorpay_count }} Settled</span>
+                            </div>
+                        </div>
+                        <div class="progress" style="height: 10px; border-radius: 10px;">
+                            <div class="progress-bar bg-primary" role="progressbar" style="width: {{ razorpay_perc }}%">
+                            </div>
+                        </div>
+                        <div class="text-end small text-muted mt-1">{{ razorpay_perc }}% of total revenue</div>
+                    </div>
+
+                    <div class="mb-4">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="fw-bold text-dark">Offline (COD)</span>
+                            <div class="text-end">
+                                <span class="d-block text-dark fw-bold">₹{{ cod_revenue|floatformat:2 }}</span>
+                                <span class="small text-muted">{{ cod_settled_count }} Settled</span>
+                            </div>
+                        </div>
+                        <div class="progress" style="height: 10px; border-radius: 10px;">
+                            <div class="progress-bar bg-warning" role="progressbar" style="width: {{ cod_perc }}%">
+                            </div>
+                        </div>
+                        <div class="text-end small text-muted mt-1">{{ cod_perc }}% of total revenue</div>
+                    </div>
+
+                    <div class="mb-4">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="fw-bold text-dark">Direct (Walk-in)</span>
+                            <div class="text-end">
+                                <span class="d-block text-dark fw-bold">₹{{ walkin_revenue|floatformat:2 }}</span>
+                                <span class="small text-muted">{{ walkin_count }} Transactions</span>
+                            </div>
+                        </div>
+                        <div class="progress" style="height: 10px; border-radius: 10px;">
+                            <div class="progress-bar bg-info" role="progressbar" style="width: {{ walkin_perc }}%">
+                            </div>
+                        </div>
+                        <div class="text-end small text-muted mt-1">{{ walkin_perc }}% of total revenue</div>
+                    </div>
+
+                    <div class="p-3 bg-light rounded-3 small">
+                        <div class="d-flex justify-content-between mb-1">
+                            <span>Pending COD:</span>
+                            <span class="fw-bold text-danger">{{ cod_pending_count }}</span>
+                        </div>
+                        <div class="text-muted" style="font-size: 0.75rem;">Orders out for delivery but not yet marked
+                            as settled.</div>
+                    </div>
+
+                    <div class="alert bg-primary bg-opacity-10 border-0 small mt-4 mb-0">
+                        <i class="fas fa-info-circle me-2 text-primary"></i>
+                        Digital payments are automatically settled. COD orders contribute to revenue once marked as
+                        <strong>Delivered</strong>.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TOP PERFORMING -->
+    <div class="card border-0 shadow-sm mb-5">
+        <div class="card-header bg-white border-0 py-3 ps-4">
+            <h5 class="fw-bold text-dark mb-0">High-Velocity Medicines</h5>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table admin-table mb-0">
+                    <thead>
+                        <tr>
+                            <th class="ps-4">Product Unit</th>
+                            <th class="text-end pe-4">Volume Sold</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for med in top_medicines %}
+                        <tr>
+                            <td class="ps-4">
+                                <div class="fw-bold text-dark">{{ med.medicine_name }}</div>
+                            </td>
+                            <td class="text-end pe-4">
+                                <span
+                                    class="badge bg-success bg-opacity-10 text-success rounded-pill px-3 py-2 fw-bold">
+                                    {{ med.total_sold }} units
+                                </span>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="2" class="text-center py-5 text-muted">No velocity data recorded.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- Date Range Modal -->
+<div class="modal fade" id="dateRangeModal" tabindex="-1" aria-labelledby="dateRangeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg" style="border-radius: 20px;">
+            <div class="modal-header bg-primary text-white border-0 py-4 px-4" style="border-radius: 20px 20px 0 0;">
+                <h5 class="modal-title fw-bold" id="dateRangeModalLabel">
+                    <i class="fas fa-calendar-alt me-2"></i>Select Date Range
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="GET" action="{% url 'admin_reports' %}">
+                <div class="modal-body p-4">
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold text-muted mb-2 text-uppercase">From Date</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-0"><i class="fas fa-calendar-day text-primary"></i></span>
+                                <input type="date" name="start_date" class="form-control border-0 bg-light p-3" value="{{ start_date }}" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold text-muted mb-2 text-uppercase">To Date</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-0"><i class="fas fa-calendar-day text-primary"></i></span>
+                                <input type="date" name="end_date" class="form-control border-0 bg-light p-3" value="{{ end_date }}" required>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer border-0 p-4 pt-0 d-flex justify-content-between">
+                    <a href="{% url 'admin_reports' %}" class="btn btn-light rounded-pill px-4 fw-bold text-muted">Reset</a>
+                    <button type="submit" class="btn btn-primary rounded-pill px-4 py-2 fw-bold shadow-sm">
+                        Apply Filter <i class="fas fa-arrow-right ms-2 small"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

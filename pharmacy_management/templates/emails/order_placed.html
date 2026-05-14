@@ -1,0 +1,82 @@
+{% extends 'emails/base_email.html' %}
+{% block email_content %}
+
+<div style="margin-bottom: 40px; text-align: left;">
+    <span class="status-pill" style="background-color: #f1f5f9; color: #1a4a8d;">ORDER CONFIRMED</span>
+    <h2 style="margin: 0; font-size: 28px; font-weight: 800; color: #0f172a; letter-spacing: -0.02em;">Order
+        Successfully Received</h2>
+    <p style="margin: 6px 0 0 0; font-size: 15px; color: #64748b;">
+        <strong>Reference ID:</strong> {{ order.formatted_id }} | <strong>Date:</strong> {{ order_date|date:"d M Y, h:i A" }}
+    </p>
+</div>
+
+<p style="margin-top: 0; font-size: 17px; color: #1e293b; font-weight: 700;">Hello {{ patient_name }},</p>
+<p style="line-height: 1.7; color: #475569; font-size: 15px;">
+    Thank you for choosing <strong>Janaushadhi Kendra Kunhipally</strong>. We have received your order request. A
+    licensed pharmacist is currently reviewing your prescription and medicine manifest to ensure everything is correct.
+</p>
+
+<div class="highlight-card"
+    style="text-align: center; background-color: #f0f9ff; border: 1px solid #bae6fd; padding: 30px; border-radius: 20px; margin: 30px 0;">
+    <span
+        style="color: #0369a1; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 10px; display: block;">Processing
+        Status</span>
+    <div style="color: #1a4a8d; font-size: 28px; font-weight: 800;">{{ status }}</div>
+</div>
+
+<h3
+    style="font-size: 13px; font-weight: 800; color: #1e293b; margin: 40px 0 15px 0; text-transform: uppercase; letter-spacing: 0.1em;">
+    Medicine Manifest Summary
+</h3>
+
+{% if items %}
+<table class="table-manifest"
+    style="width: 100%; border-collapse: separate; border-spacing: 0; margin: 30px 0; border-radius: 16px; overflow: hidden; border: 1px solid #e2e8f0;">
+    <thead>
+        <tr style="background-color: #f8fafc;">
+            <th
+                style="padding: 14px 20px; text-align: left; font-size: 11px; font-weight: 700; text-transform: uppercase; color: #64748b; letter-spacing: 0.05em; border-bottom: 1px solid #e2e8f0; width: 60%;">
+                Item Description</th>
+            <th
+                style="padding: 14px 20px; text-align: center; font-size: 11px; font-weight: 700; text-transform: uppercase; color: #64748b; letter-spacing: 0.05em; border-bottom: 1px solid #e2e8f0; width: 15%;">
+                Qty</th>
+            <th
+                style="padding: 14px 20px; text-align: right; font-size: 11px; font-weight: 700; text-transform: uppercase; color: #64748b; letter-spacing: 0.05em; border-bottom: 1px solid #e2e8f0; width: 25%;">
+                Net Price</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for item in items %}
+        <tr>
+            <td
+                style="padding: 18px 20px; border-bottom: 1px solid #f1f5f9; font-size: 14px; color: #1e293b; font-weight: 600;">
+                {{ item.medicine_name }}</td>
+            <td
+                style="padding: 18px 20px; border-bottom: 1px solid #f1f5f9; font-size: 14px; text-align: center; font-weight: 600; color: #64748b;">
+                {{ item.quantity }}</td>
+            <td
+                style="padding: 18px 20px; border-bottom: 1px solid #f1f5f9; font-size: 14px; text-align: right; color: #1a4a8d; font-weight: 700;">
+                Rs. {{ item.price|floatformat:2 }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<div
+    style="background-color: #fff7ed; border-left: 4px solid #f97316; padding: 25px; border-radius: 16px; margin: 30px 0;">
+    <p style="margin: 0; font-size: 14px; color: #9a3412; line-height: 1.6;">
+        <strong>Prescription Notification:</strong> You have uploaded a prescription for verification. Our pharmacist is
+        currently indexing the required medicines and will generate your electronic bill shortly.
+    </p>
+</div>
+{% endif %}
+
+<div style="text-align: center; margin-top: 45px;">
+    <a href="{{ track_url }}" class="btn">Track Order Live</a>
+    <p style="margin: 20px 0 0 0; font-size: 13px; color: #94a3b8; line-height: 1.5;">
+        You will receive another notification once the final bill is ready for payment. For any urgent queries, please
+        quote your Reference ID.
+    </p>
+</div>
+
+{% endblock %}

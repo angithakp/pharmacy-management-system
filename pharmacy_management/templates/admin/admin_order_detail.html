@@ -1,0 +1,197 @@
+{% extends 'admin/admin_base.html' %}
+{% block content %}
+<div class="container-fluid py-3 page-background compact-order-detail">
+    <!-- ================= MODERN DASHBOARD HEADER ================= -->
+    <div class="header-banner mb-3 p-3 rounded-4 shadow-sm bg-white border d-flex justify-content-between align-items-center">
+        <div>
+            <div class="d-flex align-items-center gap-2 mb-1">
+                <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-2 rounded-pill fw-bold small-text uppercase">
+                    Admin Portal
+                </span>
+                <span class="text-muted small">System Node: PH-PRO-01</span>
+            </div>
+            <h3 class="fw-800 text-dark mb-0">
+                Order <span class="text-primary">{{ order.formatted_id }}</span>
+            </h3>
+            <div class="d-flex align-items-center gap-2 text-muted small-text">
+                <i class="far fa-clock"></i>
+                <span>{{ order.created_at|date:"d M Y" }} at {{ order.created_at|date:"H:i" }}</span>
+            </div>
+        </div>
+        <div class="d-flex gap-3">
+            <a href="{% url 'admin_orders' %}"
+                class="btn btn-light border rounded-pill px-4 py-2 fw-bold text-dark transition-all">
+                <i class="fas fa-chevron-left me-2"></i> Return
+            </a>
+            <a href="{% url 'admin_billing' order.id %}"
+                class="btn btn-primary rounded-pill px-4 py-2 fw-bold shadow-sm transition-all hover-lift">
+                <i class="fas fa-print me-2"></i> Document View
+            </a>
+        </div>
+    </div>
+
+    <div class="row g-3">
+        <!-- PRIMARY WORKSPACE -->
+        <div class="col-lg-8">
+            <!-- PATIENT INFO -->
+            <div class="bg-white rounded-4 border p-3 shadow-sm mb-3">
+                <div class="row g-3">
+                    <div class="col-md-5">
+                        <div class="data-block">
+                            <label class="data-label">Identity</label>
+                            <div class="data-value text-primary fs-5 fw-bold text-truncate">{{ order.patient_name|title }}</div>
+                            <div class="data-sub small-text">
+                                {% if order.user %} Linked Account: <strong>{{ order.user.username }}</strong>
+                                {% else %} <span class="text-info fw-bold"><i class="fas fa-walking me-1"></i> Walk-in Customer</span> {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="data-block">
+                            <label class="data-label">Clinical Authority</label>
+                            <div class="data-value fw-bold text-dark">{{ order.doctor_name|default:"Not Mentioned"|title }}</div>
+                            <div class="data-sub small-text">Prescribing Physician</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 text-md-end">
+                        <div class="data-block">
+                            <label class="data-label">Contact Node</label>
+                            <div class="data-value fw-bold text-dark">+91 {{ order.mobile }}</div>
+                        </div>
+                    </div>
+                    <div class="col-12 border-top mt-2 pt-2 d-flex gap-5">
+                        <div class="data-block">
+                            <label class="data-label">Regional Code</label>
+                            <div class="small-text fw-bold text-dark">{{ order.pincode }}</div>
+                        </div>
+                        <div class="data-block flex-grow-1">
+                            <label class="data-label">Delivery Zone</label>
+                            <div class="small-text fw-bold text-dark">{{ order.address }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CLINICAL VIEWPORT -->
+            <div class="bg-white rounded-4 border overflow-hidden shadow-sm">
+                <div class="px-3 py-2 bg-light border-bottom d-flex justify-content-between align-items-center">
+                    <span class="small-text fw-bold text-muted uppercase tracking-wider">Clinical Documentation Asset</span>
+                    {% if order.prescription_file %}
+                    <a href="{{ order.prescription_file.url }}" class="btn btn-white btn-sm border py-1 px-3 small-text" download>
+                        <i class="fas fa-download text-primary me-1"></i> Download
+                    </a>
+                    {% endif %}
+                </div>
+                <div class="prescription-viewport p-3 bg-dots">
+                    <div class="prescription-frame rounded-3 border shadow-inset d-flex align-items-center justify-content-center bg-white" style="min-height: 320px; max-height: 320px; overflow: hidden;">
+                        {% if order.prescription_file %}
+                            {% if ".pdf" in order.prescription_file.name %}
+                                <div class="text-center py-4">
+                                    <i class="fas fa-file-pdf fa-3x text-danger mb-2"></i>
+                                    <h5 class="fw-bold mb-2">Security PDF Restricted</h5>
+                                    <p class="text-muted small-text mb-3 px-4">Direct rendering blocked for privacy.</p>
+                                    <a href="{{ order.prescription_file.url }}" target="_blank" class="btn btn-dark btn-sm rounded-pill px-4 small-text">Launch Secure Viewer</a>
+                                </div>
+                            {% else %}
+                                <img src="{{ order.prescription_file.url }}" alt="Prescription" class="prescription-image h-100 w-auto" style="object-fit: contain;">
+                            {% endif %}
+                        {% else %}
+                            <div class="text-center op-3 small text-muted py-4">
+                                <i class="fas fa-ghost fa-3x mb-2"></i>
+                                <div class="fw-bold">No Digital Asset Attached</div>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- OPERATION PANEL -->
+        <div class="col-lg-4">
+            <div class="bg-dark rounded-4 p-4 text-white shadow-lg relative overflow-hidden lifecycle-card mb-3">
+                <div class="lifecycle-glow"></div>
+                <div class="relative z-1">
+                    <label class="uppercase small-text fw-bold text-white-50 mb-3 d-block tracking-widest">Lifecycle State</label>
+                    <div class="d-flex align-items-center gap-3 mb-3">
+                        <div class="lifecycle-badge-md">
+                            {% if order.status == 'submitted' %}<i class="fas fa-inbox text-blue"></i>
+                            {% elif order.status == 'verified' %}<i class="fas fa-user-check text-green"></i>
+                            {% elif order.status == 'billed' %}<i class="fas fa-file-invoice text-emerald"></i>
+                            {% elif order.status == 'paid' %}<i class="fas fa-shield-check text-gold"></i>
+                            {% elif order.status == 'delivered' %}<i class="fas fa-shipping-fast text-white"></i>
+                            {% elif order.status == 'rejected' %}<i class="fas fa-ban text-red"></i>
+                            {% else %}<i class="fas fa-database text-white-50"></i>{% endif %}
+                        </div>
+                        <div>
+                            <h4 class="fw-900 mb-0 tracing-tight">{{ order.get_status_display|upper }}</h4>
+                            <span class="badge bg-white bg-opacity-10 text-white-50 small-text px-2 mt-1">Real-time Feed</span>
+                        </div>
+                    </div>
+                    <div class="progress-container" style="height: 8px;">
+                        <div class="progress-fill" style="width: {% if order.status == 'submitted' %}20%{% elif order.status == 'verified' %}40%{% elif order.status == 'billed' %}60%{% elif order.status == 'paid' %}80%{% elif order.status == 'delivered' %}100%{% else %}15%{% endif %}"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-4 border p-4 shadow-sm mb-3">
+                <label class="uppercase small-text fw-bold text-muted mb-3 d-block tracking-wider">Operation Hub</label>
+                <div class="d-grid gap-3">
+                    <a href="{% url 'add_order_item' order.id %}" class="btn btn-primary rounded-pill py-2 fw-bold shadow-sm">
+                        <i class="fas fa-capsules me-2"></i> Add Medicines
+                    </a>
+                    <a href="{% url 'admin_order_update' order.id %}" class="btn btn-outline-dark rounded-pill py-2 fw-bold">
+                        <i class="fas fa-sync-alt me-2"></i> Update State
+                    </a>
+                    <a href="{% url 'admin_generate_bill' order.id %}" class="btn btn-success-gradient rounded-pill py-2 fw-bold shadow-sm">
+                        <i class="fas fa-check-double me-2"></i> Process Billing
+                    </a>
+                </div>
+            </div>
+
+            <div class="bg-blue-soft rounded-4 p-3 text-primary d-flex gap-3 align-items-center border border-primary border-opacity-10">
+                <i class="fas fa-shield-alt fs-5"></i>
+                <div class="small-text fw-medium"><strong>Security Note:</strong> All status updates trigger encrypted notifications to the patient node.</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.body.classList.add('compact-admin-body');
+</script>
+
+<style>
+    :root { --accent-blue: #3b82f6; }
+    .page-background { background: #f8fafc; min-height: calc(100vh - 80px); }
+    .fw-800 { font-weight: 800; }
+    .fw-900 { font-weight: 900; }
+    .uppercase { text-transform: uppercase; }
+    .tracing-tight { letter-spacing: -0.01em; }
+    .small-text { font-size: 0.75rem; }
+    .bg-dots { background-image: radial-gradient(#e2e8f0 1px, transparent 1px); background-size: 15px 15px; }
+
+    .data-label { font-size: 0.65rem; text-transform: uppercase; font-weight: 800; color: #94a3b8; letter-spacing: 0.05em; margin-bottom: 2px; display: block; }
+    .data-value { font-size: 0.95rem; line-height: 1.2; }
+    
+    .lifecycle-card { position: relative; background: #0f172a; border: 1px solid rgba(255, 255, 255, 0.1); }
+    .lifecycle-badge-md { width: 48px; height: 48px; background: rgba(255, 255, 255, 0.1); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; }
+    .progress-container { background: rgba(255, 255, 255, 0.1); border-radius: 4px; overflow: hidden; }
+    .progress-fill { height: 100%; background: linear-gradient(90deg, #3b82f6, #60a5fa); transition: width 1s ease-in-out; }
+
+    .btn-success-gradient { background: linear-gradient(135deg, #10b981 0%, #059669 100%); border: none; color: white !important; }
+    .bg-blue-soft { background: #eff6ff; }
+    .op-3 { opacity: 0.3; }
+
+    /* Admin shell overrides */
+    .compact-admin-body .content-wrapper { padding: 1.25rem !important; }
+    .compact-admin-body header.admin-topbar { padding: 0.5rem 1.5rem !important; height: auto !important; }
+    .compact-admin-body footer { display: none !important; }
+
+    .prescription-viewport { max-height: 350px; padding: 15px !important; }
+    .prescription-frame { border-style: dashed !important; border-width: 2px !important; }
+    .prescription-image { max-width: 100%; height: auto; border-radius: 6px; }
+
+    .hover-lift:hover { transform: translateY(-3px); }
+</style>
+{% endblock %}
+

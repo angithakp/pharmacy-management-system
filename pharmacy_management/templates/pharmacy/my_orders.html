@@ -1,0 +1,179 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<section class="py-5 bg-light" style="min-height: 85vh;">
+    <div class="container animate-up">
+        
+        <!-- ================= PAGE HEADER ================= -->
+        <div class="row mb-5">
+            <div class="col-lg-8 mx-auto text-center">
+                <h6 class="text-primary fw-bold text-uppercase ls-1">Order History</h6>
+                <h1 class="display-5 fw-black text-dark mb-2">My Prescriptions</h1>
+                <p class="text-muted lead">Track your healthcare journey and manage your past medicine requests easily.</p>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-9 mx-auto">
+                {% for order in orders %}
+                <div class="card border-0 shadow-sm rounded-4 mb-4 overflow-hidden order-item-card animate-up delay-{{ forloop.counter|slugify }}">
+                    <!-- Left accent status bar -->
+                    <div class="status-indicator 
+                        {% if order.status == 'delivered' %}bg-success{% elif order.status == 'cancelled' or order.status == 'rejected' %}bg-danger{% elif order.status == 'paid' %}bg-primary{% else %}bg-warning{% endif %}" 
+                        style="position: absolute; left: 0; top: 0; bottom: 0; width: 6px;">
+                    </div>
+                    
+                    <div class="card-body p-4 ps-5">
+                        <div class="d-flex justify-content-between align-items-start flex-wrap gap-3 mb-4">
+                            <div>
+                                <h5 class="fw-bold text-dark mb-1">Order {{ order.formatted_id }}</h5>
+                                <div class="text-muted extra-small d-flex align-items-center">
+                                    <i class="fas fa-calendar-day me-2"></i> {{ order.created_at|date:"d M Y, H:i" }}
+                                </div>
+                            </div>
+                            <div class="status-badge-container">
+                                <span class="badge border-0 rounded-pill px-3 py-2 fw-bold text-uppercase extra-small
+                                    {% if order.status == 'submitted' %}bg-light text-muted
+                                    {% elif order.status == 'verified' %}bg-info-light text-info
+                                    {% elif order.status == 'billed' %}bg-warning-light text-warning
+                                    {% elif order.status == 'paid' %}bg-primary-light text-primary
+                                    {% elif order.status == 'delivered' %}bg-success-light text-success
+                                    {% elif order.status == 'cancelled' %}bg-danger-light text-danger
+                                    {% elif order.status == 'rejected' %}bg-danger-light text-danger
+                                    {% elif order.status == 'out_of_stock' %}bg-warning-light text-warning
+                                    {% elif order.status == 'cod_selected' %}bg-info-light text-info
+                                    {% elif order.status == 'pickup_only' %}bg-primary-light text-primary
+                                    {% endif %}">
+                                    <i class="fas fa-circle-dot me-1" style="font-size: 0.6rem;"></i>
+                                    {{ order.get_status_display }}
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="row g-4 mb-4">
+                            <div class="col-md-4">
+                                <label class="text-muted extra-small text-uppercase fw-bold ls-1 mb-1 d-block">Patient Name</label>
+                                <span class="fw-bold text-dark">{{ order.patient_name }}</span>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="text-muted extra-small text-uppercase fw-bold ls-1 mb-1 d-block">Invoice Amount</label>
+                                <span class="fw-bold text-dark">
+                                    {% if order.total_amount %}
+                                        ₹{{ order.total_amount|floatformat:2 }}
+                                    {% else %}
+                                        <span class="text-muted small">Awaiting Review</span>
+                                    {% endif %}
+                                </span>
+                            </div>
+                            {% if order.payment_date %}
+                            <div class="col-md-4">
+                                <label class="text-muted extra-small text-uppercase fw-bold ls-1 mb-1 d-block">Completion Date</label>
+                                <span class="fw-bold text-dark">{{ order.payment_date|date:"d M Y" }}</span>
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- SPECIAL STATUS NOTICES -->
+                        {% if order.status == "out_of_stock" %}
+                        <div class="p-3 bg-warning-light border border-warning border-opacity-25 rounded-3 mb-4 d-flex align-items-center gap-3">
+                            <i class="fas fa-triangle-exclamation text-warning"></i>
+                            <span class="small text-dark fw-medium">Some medicines are currently unavailable. Check details for alternatives.</span>
+                        </div>
+                        {% elif order.status == "pickup_only" %}
+                        <div class="p-3 bg-primary-light border border-primary border-opacity-25 rounded-3 mb-4 d-flex align-items-center gap-3">
+                            <i class="fas fa-store text-primary"></i>
+                            <span class="small text-dark fw-medium">Available for Store Pickup at PMBJK Kendra.</span>
+                        </div>
+                        {% elif order.status == "rejected" and order.rejection_reason %}
+                        <div class="p-3 bg-danger-light border border-danger border-opacity-25 rounded-3 mb-4">
+                            <div class="d-flex align-items-center gap-3 mb-2">
+                                <i class="fas fa-circle-xmark text-danger"></i>
+                                <span class="small text-danger fw-bold text-uppercase ls-1">Rejection Reason</span>
+                            </div>
+                            <p class="small text-dark mb-0 ms-4 ps-1">{{ order.rejection_reason }}</p>
+                        </div>
+                        {% endif %}
+
+                        <div class="d-flex justify-content-end align-items-center flex-wrap gap-2 pt-3 border-top">
+                            {% if order.status == 'submitted' or order.status == 'verified' %}
+                            <a href="{% url 'cancel_order' order.id %}" class="btn btn-sm btn-outline-danger border-0 rounded-pill px-3 fw-bold"
+                                onclick="return confirm('Do you really want to cancel this prescription request?');">
+                                <i class="fas fa-ban me-1"></i> Cancel
+                            </a>
+                            {% endif %}
+                            
+                            <a href="{% url 'order_tracking' order.id %}" class="btn btn-sm btn-outline-secondary border-0 rounded-pill px-3 fw-bold">
+                                <i class="fas fa-location-dot me-1"></i> Tracking
+                            </a>
+                            
+                            <a href="{% url 'order_detail_user' order.id %}" class="btn btn-sm btn-outline-primary border-0 rounded-pill px-3 fw-bold">
+                                <i class="fas fa-list-check me-1"></i> Summary
+                            </a>
+
+                            {% if order.status == 'billed' or order.status == 'paid' or order.status == 'delivered' %}
+                            <a href="{% url 'bill_view' order.id %}" class="btn btn-sm theme-btn-primary rounded-pill px-4 fw-bold shadow-sm">
+                                <i class="fas fa-file-invoice-dollar me-1"></i> View Invoice
+                            </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="text-center py-5 bg-white rounded-4 shadow-sm border animate-up">
+                    <div class="mb-4 opacity-20">
+                        <i class="fas fa-folder-open fa-6x"></i>
+                    </div>
+                    <h3 class="fw-bold text-dark">No Orders Found</h3>
+                    <p class="text-muted mx-auto mb-4" style="max-width: 400px;">You haven't placed any prescription orders yet. Start saving on your healthcare today.</p>
+                    <a href="{% url 'medicines' %}" class="btn btn-primary px-5 rounded-pill shadow">
+                        Shop Generic Medicines
+                    </a>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+    :root {
+        --theme-primary: #00418c;
+        --theme-soft: rgba(0, 65, 140, 0.08);
+    }
+
+    .ls-1 { letter-spacing: 0.1rem; }
+    .extra-small { font-size: 0.75rem; }
+    .bg-primary-light { background-color: var(--theme-soft); }
+    .bg-success-light { background-color: #f0fdf4; }
+    .bg-warning-light { background-color: #fefce8; }
+    .bg-danger-light { background-color: #fee2e2; }
+    .bg-info-light { background-color: #f0f9ff; }
+    .text-warning { color: #854d0e !important; }
+    .text-info { color: #075985 !important; }
+    .theme-text-primary { color: var(--theme-primary) !important; }
+    
+    .theme-btn-primary {
+        background: var(--theme-primary);
+        color: white;
+        border: none;
+        transition: all 0.3s ease;
+    }
+    .theme-btn-primary:hover {
+        background: #00336e;
+        color: white;
+        transform: translateY(-2px);
+    }
+
+    .order-item-card {
+        transition: 0.3s ease;
+        border: 1px solid #eee !important;
+    }
+    
+    .order-item-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px rgba(0, 65, 140, 0.05) !important;
+        border-color: var(--theme-primary) !important;
+    }
+</style>
+
+{% endblock %}

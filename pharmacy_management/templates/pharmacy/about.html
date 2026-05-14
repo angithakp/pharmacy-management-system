@@ -1,0 +1,175 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+<!-- ================= PREMIUM ABOUT HERO ================= -->
+<section class="about-hero position-relative overflow-hidden py-100 mb-5">
+    <div class="hero-bg-accent position-absolute top-0 end-0 h-100 w-50 d-none d-lg-block"></div>
+    
+    <div class="container position-relative z-2">
+        <div class="row align-items-center g-5">
+            <div class="col-lg-6 animate-up">
+                <div class="badge bg-primary-light text-primary rounded-pill px-4 py-2 fw-black text-uppercase ls-2 mb-4">
+                    <i class="fas fa-microscope me-2"></i> Clinical Excellence
+                </div>
+                <h1 class="display-3 fw-black text-dark mb-4 ls-neg-2">
+                    Redefining <br>
+                    <span class="text-gradient-primary italic">Generic</span> Healthcare
+                </h1>
+                <p class="lead text-muted mb-5 pe-lg-5">
+                    We are more than just a pharmacy. We are a digital-first Kendra committed to the PMBJK mission of making life-saving molecules accessible to every home in Kunhipally.
+                </p>
+                <div class="d-flex flex-wrap gap-4 align-items-center">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="brand-stat-icon bg-white shadow-sm border rounded-circle text-primary">
+                            <i class="fas fa-heart-pulse"></i>
+                        </div>
+                        <div>
+                            <h6 class="fw-black mb-0">90% Savings</h6>
+                            <p class="extra-small text-muted mb-0">Generic Advantage</p>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="brand-stat-icon bg-white shadow-sm border rounded-circle text-success">
+                            <i class="fas fa-shield-halved"></i>
+                        </div>
+                        <div>
+                            <h6 class="fw-black mb-0">WHO-GMP</h6>
+                            <p class="extra-small text-muted mb-0">Quality Verified</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6 animate-up delay-1">
+                <div class="hero-visual-stack position-relative">
+                    <div class="main-image-container shadow-2xl rounded-5 overflow-hidden border">
+                        <img src="{% static 'img/about/pharmacy_interior.png' %}" class="img-fluid w-100 h-100 object-fit-cover" alt="Pharmacy Interior">
+                    </div>
+                    <!-- Floating Stat Card -->
+                    <div class="floating-hud bg-white p-4 rounded-4 shadow-2xl border-start border-primary border-5 position-absolute top-0 end-0 m-4 d-none d-md-block">
+                        <div class="d-flex align-items-center gap-3 mb-3">
+                            <div class="stat-indicator rounded-circle bg-success shadow-pulse"></div>
+                            <span class="small fw-black text-dark text-uppercase ls-1">Live Inventory</span>
+                        </div>
+                        <h4 class="fw-black mb-1 text-primary">10,000+</h4>
+                        <p class="extra-small text-muted mb-0 fw-bold">Medicines Stocked</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ================= MISSION & VALUES (THE PILLARS) ================= -->
+<section class="py-100 bg-light-soft" style="border-radius: 60px 60px 0 0;">
+    <div class="container">
+        <div class="text-center mb-100 animate-up">
+            <h6 class="text-primary fw-black text-uppercase ls-2 mb-3">Our Foundation</h6>
+            <h2 class="display-5 fw-black text-dark ls-neg-1">Driven by Purpose, Guided by Science</h2>
+            <div class="mx-auto bg-primary rounded-pill mt-4" style="width: 80px; height: 6px;"></div>
+        </div>
+
+        <div class="row g-4 mb-5">
+            <!-- Quality Pillar -->
+            <div class="col-lg-4 animate-up">
+                <div class="glass-card h-100 p-5 rounded-5 border bg-white hover-primary-border transition-all">
+                    <div class="pillar-icon-box bg-primary-light text-primary mb-4">
+                        <i class="fas fa-award"></i>
+                    </div>
+                    <h4 class="fw-black text-dark mb-3">Uncompromising Quality</h4>
+                    <p class="text-muted mb-4 small leading-relaxed">Every tablet, capsule, and syrup in our Kendra undergoes rigorous WHO-GMP clinical verification through the Central Drugs Standard Control Organisation.</p>
+                    <ul class="list-unstyled extra-small fw-bold text-dark text-uppercase ls-1 opacity-75">
+                        <li class="mb-2"><i class="fas fa-circle-check text-success me-2"></i> Lab Tested</li>
+                        <li class="mb-2"><i class="fas fa-circle-check text-success me-2"></i> Government Approved</li>
+                    </ul>
+                </div>
+            </div>
+            <!-- Vision Pillar -->
+            <div class="col-lg-4 animate-up delay-1">
+                <div class="glass-card h-100 p-5 rounded-5 border bg-white hover-success-border transition-all">
+                    <div class="pillar-icon-box bg-success-light text-success mb-4">
+                        <i class="fas fa-eye"></i>
+                    </div>
+                    <h4 class="fw-black text-dark mb-3">Universal Accessibility</h4>
+                    <p class="text-muted mb-4 small leading-relaxed">Our vision is to erase the economic divide in healthcare. Prime health should not be a luxury, but a fundamental right for every Indian citizen.</p>
+                    <ul class="list-unstyled extra-small fw-bold text-dark text-uppercase ls-1 opacity-75">
+                        <li class="mb-2"><i class="fas fa-circle-check text-success me-2"></i> Zero Price Inflation</li>
+                        <li class="mb-2"><i class="fas fa-circle-check text-success me-2"></i> Affordable Healthcare</li>
+                    </ul>
+                </div>
+            </div>
+            <!-- Trust Pillar -->
+            <div class="col-lg-4 animate-up delay-2">
+                <div class="glass-card h-100 p-5 rounded-5 border bg-white hover-warning-border transition-all">
+                    <div class="pillar-icon-box bg-warning-light text-warning mb-4">
+                        <i class="fas fa-handshake-angle"></i>
+                    </div>
+                    <h4 class="fw-black text-dark mb-3">Patient-First Ethics</h4>
+                    <p class="text-muted mb-4 small leading-relaxed">We operate with 100% digital transparency. Our automated billing and verified logistics ensure honesty in every transaction.</p>
+                    <ul class="list-unstyled extra-small fw-bold text-dark text-uppercase ls-1 opacity-75">
+                        <li class="mb-2"><i class="fas fa-circle-check text-success me-2"></i> Verified Billing</li>
+                        <li class="mb-2"><i class="fas fa-circle-check text-success me-2"></i> Support 24/7</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ================= LEADERSHIP SECTION ================= -->
+<section class="py-100 bg-white shadow-inset">
+    <div class="container">
+        <div class="row align-items-center g-5">
+            <div class="col-lg-5 animate-up">
+                <h6 class="text-primary fw-black text-uppercase ls-2 mb-3">The Pharmacist Team</h6>
+                <h2 class="display-6 fw-black text-dark mb-4 ls-neg-1">Clinical Expertise Behind Every Order</h2>
+                <p class="text-muted mb-5 mb-lg-0">
+                    Behind our digital platform is a team of certified pharmacists who clinically review every single prescription uploaded to our system. We ensure that your health is managed by humans, complemented by technology.
+                </p>
+                <div class="p-4 bg-light rounded-4 border">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="rounded-circle bg-primary" style="width: 12px; height: 12px;"></div>
+                        <span class="small fw-bold text-dark">Licensed Professionals</span>
+                    </div>
+                    <div class="d-flex align-items-center gap-3 mt-2">
+                        <div class="rounded-circle bg-success" style="width: 12px; height: 12px;"></div>
+                        <span class="small fw-bold text-dark">Strict Drug Protocol Compliance</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-7 animate-up delay-1">
+                <div class="row g-4 pt-lg-5">
+                    <div class="col-md-6">
+                        <div class="leadership-card group">
+                            <div class="card-img-wrapper rounded-5 overflow-hidden shadow-lg border-2 border-primary border" style="height: 380px;">
+                                <img src="{% static 'img/about/chief_pharmacist.png' %}" class="img-fluid w-100 h-100 object-fit-cover" alt="Chief Pharmacist">
+                            </div>
+                            <div class="card-body-overlay p-4 bg-white rounded-4 shadow-lg m-4 mt-n5 position-relative z-3 border">
+                                <h5 class="fw-black text-dark mb-1">Chief Pharmacist</h5>
+                                <p class="extra-small text-primary fw-bold text-uppercase ls-1 mb-0">Medicine Verification Lead</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mt-md-5">
+                        <div class="leadership-card group">
+                            <div class="card-img-wrapper rounded-5 overflow-hidden shadow-lg border-2 border-success border" style="height: 380px;">
+                                <img src="{% static 'img/about/ops_director.png' %}" class="img-fluid w-100 h-100 object-fit-cover" alt="Ops Director">
+                            </div>
+                            <div class="card-body-overlay p-4 bg-white rounded-4 shadow-lg m-4 mt-n5 position-relative z-3 border">
+                                <h5 class="fw-black text-dark mb-1">Ops Director</h5>
+                                <p class="extra-small text-success fw-bold text-uppercase ls-1 mb-0">Compliance & Logistics</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+
+
+
+{% endblock %}
+

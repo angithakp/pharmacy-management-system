@@ -1,0 +1,152 @@
+{% extends "admin/admin_base.html" %}
+
+{% block content %}
+
+<div class="container-fluid py-4">
+
+    <!-- ================= PAGE HEADER ================= -->
+    <div class="row mb-5 align-items-center">
+        <div class="col-md-8">
+            <h2 class="fw-bold text-dark mb-1">User Messages & Queries</h2>
+            <p class="text-muted mb-0">Review user feedback, answer questions, and manage direct communications.</p>
+        </div>
+        <div class="col-md-4 text-md-end mt-3 mt-md-0">
+            <div class="badge bg-primary bg-opacity-10 text-primary px-4 py-2 rounded-pill font-monospace shadow-sm">
+                <i class="fas fa-envelope-open-text me-2"></i>{{ pharmacist_messages|length }} Total Messages
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= MESSAGES TABLE ================= -->
+    <div class="card border-0 shadow-sm">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table admin-table align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th class="ps-4">Sender Details</th>
+                            <th style="max-width: 300px;">Message Summary</th>
+                            <th>Date & Time</th>
+                            <th>Status</th>
+                            <th class="text-end pe-4">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for msg in pharmacist_messages %}
+                        <tr>
+                            <td class="ps-4 py-3">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div class="avatar bg-light border border-secondary border-opacity-25 rounded-circle d-flex align-items-center justify-content-center fw-bold shadow-sm"
+                                        style="width: 45px; height: 45px; font-size: 1.2rem; color: var(--primary);">
+                                        {{ msg.name|make_list|first|upper }}
+                                    </div>
+                                    <div>
+                                        <div class="fw-bold text-dark mb-1">
+                                            {% if msg.name %}{{ msg.name }}{% else %}Unknown User{% endif %}
+                                        </div>
+                                        <div class="small fw-semibold text-primary">
+                                            <i class="fas fa-envelope text-secondary opacity-50 me-1"
+                                                style="font-size: 0.8rem;"></i>
+                                            {% if msg.email %}{{ msg.email }}{% else %}No email provided{% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+
+                            <td style="max-width: 300px;">
+                                <div class="text-truncate text-muted small" title="{{ msg.message }}">
+                                    {{ msg.message }}
+                                </div>
+                            </td>
+
+                            <td>
+                                <div class="d-flex align-items-center mb-1">
+                                    <i class="fas fa-calendar-alt text-secondary opacity-50 me-2"
+                                        style="width: 14px; font-size: 0.8rem;"></i>
+                                    <span class="small fw-bold text-dark">{{ msg.created_at|date:"d M Y" }}</span>
+                                </div>
+                                <div class="extra-small text-muted ms-4 ps-1">
+                                    {{ msg.created_at|time:"h:i A" }}
+                                </div>
+                            </td>
+
+                            <td>
+                                {% if not msg.is_read_by_admin %}
+                                <span class="badge bg-danger rounded-pill px-2 mb-1" style="font-size: 0.65rem;">NEW</span>
+                                {% endif %}
+                                
+                                {% if msg.reply %}
+                                <span class="badge status-chip status-verified shadow-sm">
+                                    <i class="fas fa-check-double me-1"></i> Replied
+                                </span>
+                                {% else %}
+                                <span class="badge status-chip shadow-sm text-warning"
+                                    style="background-color: #fffbeb; border: 1px solid #fef3c7;">
+                                    <i class="fas fa-clock me-1"></i> Pending
+                                </span>
+                                {% endif %}
+                            </td>
+
+                            <td class="text-end pe-4">
+                                <div class="d-flex justify-content-end gap-2">
+                                    {% if msg.reply %}
+                                    <a href="{% url 'admin_reply_message' msg.id %}"
+                                        class="btn btn-sm btn-light text-primary hover-darken border shadow-sm">
+                                        <i class="fas fa-eye me-1"></i> View Thread
+                                    </a>
+                                    {% else %}
+                                    <a href="{% url 'admin_reply_message' msg.id %}"
+                                        class="btn btn-sm btn-primary shadow-sm">
+                                        <i class="fas fa-reply me-1"></i> Reply Now
+                                    </a>
+                                    {% endif %}
+                                    <a href="{% url 'admin_delete_message' msg.id %}" 
+                                       class="btn btn-sm btn-outline-danger shadow-sm"
+                                       onclick="return confirm('Are you sure you want to delete this message from {{ msg.name }}? This action cannot be undone.')">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5" class="text-center py-5">
+                                <div class="text-muted">
+                                    <i class="fas fa-inbox fa-3x mb-3 opacity-20"></i>
+                                    <p class="mb-0 fw-medium">No messages found in the inbox.</p>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .letter-spacing-1 {
+        letter-spacing: 1px;
+    }
+
+    .extra-small {
+        font-size: 0.75rem;
+    }
+
+    .status-chip {
+        text-transform: none;
+        letter-spacing: normal;
+        padding: 6px 12px;
+        font-weight: 600;
+        border-radius: 8px;
+    }
+
+    .hover-darken:hover {
+        background-color: #e2e8f0;
+        transform: translateY(-1px);
+        transition: all 0.2s ease;
+    }
+</style>
+
+{% endblock %}

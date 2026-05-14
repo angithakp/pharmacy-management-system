@@ -1,0 +1,285 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="profile-wrapper animate-up">
+
+        <!-- SIDEBAR NAVIGATION -->
+        <div class="profile-sidebar">
+            <div class="sidebar-card text-center mb-4">
+                <div class="position-relative d-inline-block mb-4">
+                    <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center text-white shadow-lg mx-auto" 
+                        style="width: 100px; height: 100px; font-size: 2.5rem; font-weight: 800; background: linear-gradient(135deg, var(--primary), #003366);">
+                        {{ user.username|first|upper }}
+                    </div>
+                    <div class="position-absolute bottom-0 end-0 bg-success text-white rounded-circle border border-4 border-white d-flex align-items-center justify-content-center" 
+                        style="width: 32px; height: 32px; cursor: pointer;" title="Active Status">
+                        <i class="fas fa-check extra-small" style="font-size: 0.6rem;"></i>
+                    </div>
+                </div>
+                
+                <h5 class="fw-bold text-dark mb-1">{{ user.first_name|default:user.username }}</h5>
+                <p class="text-muted extra-small mb-4"><i class="fas fa-envelope me-1 opacity-50"></i> {{ user.email }}</p>
+                
+                <div class="badge bg-primary-light text-primary rounded-pill px-3 py-2 fw-bold extra-small mb-2">
+                    <i class="fas fa-shield-check me-1"></i> Verified Profile
+                </div>
+
+                <hr class="my-4 opacity-10">
+
+                <nav class="nav flex-column" id="profile-tabs" role="tablist">
+                    <a class="profile-nav-item active mb-2" id="overview-tab" data-bs-toggle="tab" href="#overview" role="tab">
+                        <i class="fas fa-layer-group"></i> Overview
+                    </a>
+                    <a class="profile-nav-item mb-2" id="edit-profile-tab" data-bs-toggle="tab" href="#edit-profile" role="tab">
+                        <i class="fas fa-user-pen"></i> Edit Profile
+                    </a>
+                    <a class="profile-nav-item mb-2" href="{% url 'my_orders' %}">
+                        <i class="fas fa-clock-rotate-left"></i> My Orders
+                    </a>
+                    <a class="profile-nav-item mb-2" href="{% url 'user_messages' %}">
+                        <i class="fas fa-comment-dots"></i> Conversations
+                        {% if unread_messages_count > 0 %}
+                            <span class="badge bg-danger rounded-pill ms-auto px-2">{{ unread_messages_count }}</span>
+                        {% endif %}
+                    </a>
+                    <a class="profile-nav-item mb-2" id="security-tab" data-bs-toggle="tab" href="#security" role="tab">
+                        <i class="fas fa-shield-halved"></i> Security
+                    </a>
+                    
+                    <div class="mt-4 pt-2">
+                        <a class="btn btn-outline-danger w-100 rounded-pill py-2 small fw-bold" href="{% url 'logout' %}">
+                            <i class="fas fa-power-off me-2"></i> Sign Out
+                        </a>
+                    </div>
+                </nav>
+            </div>
+            
+            <div class="sidebar-card bg-primary text-white p-4 text-start">
+                <h6 class="fw-bold mb-3">Healthcare Tip</h6>
+                <p class="small opacity-75 mb-0">Generic medicines are as effective as branded ones and can save you up to 90% on costs.</p>
+            </div>
+        </div>
+
+        <!-- MAIN CONTENT AREA -->
+        <div class="profile-main">
+
+            <div class="tab-content" id="profile-content">
+
+                <!-- OVERVIEW TAB -->
+                <div class="tab-pane fade show active" id="overview" role="tabpanel">
+                    <div class="profile-header-card animate-up">
+                        <div class="row align-items-center">
+                            <div class="col-lg-8">
+                                <h1 class="display-6 fw-black mb-2 text-white">Hello, {{ user.first_name|default:user.username }}!</h1>
+                                <p class="opacity-75 mb-0">Welcome to your healthcare dashboard. Manage your prescriptions and track your health journey.</p>
+                            </div>
+                            <div class="col-lg-4 text-lg-end mt-4 mt-lg-0">
+                                <div class="bg-white bg-opacity-20 d-inline-block px-4 py-3 rounded-4 backdrop-blur shadow-sm text-dark">
+                                    <small class="d-block opacity-75">Member Since</small>
+                                    <span class="fw-bold text-dark">{{ user.date_joined|date:"M d, Y" }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- STATS GRID -->
+                    <div class="row g-4 mb-5">
+                        <div class="col-md-4">
+                            <div class="stat-card-modern shadow-sm border-0 h-100">
+                                <div class="stat-icon bg-primary-light text-primary">
+                                    <i class="fas fa-box-open"></i>
+                                </div>
+                                <h2 class="fw-black mb-1">{{ total_orders }}</h2>
+                                <p class="text-muted small mb-0">Total Orders Placed</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="stat-card-modern shadow-sm border-0 h-100">
+                                <div class="stat-icon bg-success-light text-success">
+                                    <i class="fas fa-indian-rupee-sign"></i>
+                                </div>
+                                <h2 class="fw-black mb-1">₹{{ total_spent|floatformat:2 }}</h2>
+                                <p class="text-muted small mb-0">Total Life Savings</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="stat-card-modern shadow-sm border-0 h-100">
+                                <div class="stat-icon" style="background-color: #fef3c7; color: #d97706;">
+                                    <i class="fas fa-message"></i>
+                                </div>
+                                <h2 class="fw-black mb-1">{{ total_messages }}</h2>
+                                <p class="text-muted small mb-0">Queries Answered</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- RECENT ACTIVITY -->
+                    <div class="card border-0 shadow-sm rounded-4 overflow-hidden h-100 mb-4 animate-up delay-1">
+                        <div class="card-header bg-white border-bottom p-4 d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0 fw-bold d-flex align-items-center"><i class="fas fa-file-medical me-2 text-primary"></i> Recent Prescriptions</h5>
+                            <a href="{% url 'my_orders' %}" class="btn btn-sm btn-primary-light text-primary fw-bold px-3 rounded-pill">View All Orders</a>
+                        </div>
+
+                        {% if recent_orders %}
+                        <div class="table-responsive">
+                            <table class="table align-middle mb-0">
+                                <thead class="bg-light">
+                                    <tr>
+                                        <th class="ps-4">Order ID</th>
+                                        <th>Patient</th>
+                                        <th>Date</th>
+                                        <th>Status</th>
+                                        <th class="text-end pe-4">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for order in recent_orders %}
+                                    <tr>
+                                        <td class="ps-4 fw-bold text-primary">{{ order.formatted_id }}</td>
+                                        <td>{{ order.patient_name }}</td>
+                                        <td>{{ order.created_at|date:"d M Y" }}</td>
+                                        <td>
+                                            {% if order.status == 'delivered' %}
+                                                <span class="badge bg-success-light text-success rounded-pill px-3 py-2 extra-small">Delivered</span>
+                                            {% elif order.status == 'cancelled' %}
+                                                <span class="badge bg-danger-light text-danger rounded-pill px-3 py-2 extra-small">Cancelled</span>
+                                            {% elif order.status == 'paid' %}
+                                                <span class="badge bg-primary-light text-primary rounded-pill px-3 py-2 extra-small">Paid</span>
+                                            {% else %}
+                                                <span class="badge bg-light text-muted border rounded-pill px-3 py-2 extra-small">Pending</span>
+                                            {% endif %}
+                                        </td>
+                                        <td class="text-end pe-4">
+                                            <a href="{% url 'bill_view' order.id %}" class="btn btn-sm btn-outline-primary rounded-pill px-3">View Bill</a>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        {% else %}
+                        <div class="card-body py-5 text-center">
+                            <div class="mb-3 opacity-20">
+                                <i class="fas fa-file-prescription fa-4x"></i>
+                            </div>
+                            <h6 class="fw-bold text-muted">No prescriptions found</h6>
+                            <p class="text-muted small mb-4">Start by uploading your first prescription today.</p>
+                            <a href="{% url 'upload_prescription' %}" class="btn btn-primary px-4 rounded-pill">Upload Now</a>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- EDIT PROFILE TAB -->
+                <div class="tab-pane fade" id="edit-profile" role="tabpanel">
+                    <div class="card border-0 shadow-sm rounded-4 animate-up">
+                        <div class="card-header bg-white border-bottom p-4">
+                            <h5 class="mb-0 fw-bold"><i class="fas fa-user-gear me-2 text-primary"></i> Profile Information</h5>
+                        </div>
+                        <div class="card-body p-4">
+                            <form method="POST">
+                                {% csrf_token %}
+                                <div class="row g-4">
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-bold small">First Name</label>
+                                        <input type="text" name="first_name" class="form-control rounded-3" value="{{ user.first_name }}" placeholder="Your first name">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-bold small">Last Name</label>
+                                        <input type="text" name="last_name" class="form-control rounded-3" value="{{ user.last_name }}" placeholder="Your last name">
+                                    </div>
+                                    <div class="col-md-12">
+                                        <label class="form-label fw-bold small">Email Address</label>
+                                        <input type="email" name="email" class="form-control rounded-3" value="{{ user.email }}" placeholder="Enter active email address">
+                                        <div class="form-text text-muted extra-small mt-2">Required for order notifications and bill receipts.</div>
+                                    </div>
+                                    <div class="col-md-12 pt-3">
+                                        <button type="submit" class="btn btn-primary px-5 py-2 rounded-pill shadow-sm fw-bold">
+                                            Update Profile
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    
+                    <div class="card border-0 shadow-sm rounded-4 mt-4 bg-primary-light animate-up delay-1">
+                        <div class="card-body p-4">
+                            <h6 class="fw-bold text-primary mb-3">Account Details</h6>
+                            <div class="row g-3">
+                                <div class="col-sm-6">
+                                    <span class="text-muted d-block small">System ID (Username)</span>
+                                    <span class="fw-bold text-dark">{{ user.username }}</span>
+                                </div>
+                                <div class="col-sm-6">
+                                    <span class="text-muted d-block small">Joined Platform</span>
+                                    <span class="fw-bold text-dark">{{ user.date_joined|date:"d F, Y" }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECURITY TAB -->
+                <div class="tab-pane fade" id="security" role="tabpanel">
+                    <div class="card border-0 shadow-sm rounded-4 animate-up">
+                        <div class="card-header bg-white border-bottom p-4">
+                            <h5 class="mb-0 fw-bold"><i class="fas fa-shield-halved me-2 text-primary"></i> Account Security</h5>
+                        </div>
+                        <div class="card-body p-4">
+                            <div class="d-flex align-items-center justify-content-between p-4 bg-light rounded-4 mb-4 border">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div class="bg-white p-3 rounded-circle text-primary shadow-sm"><i class="fas fa-key"></i></div>
+                                    <div>
+                                        <h6 class="fw-bold mb-1">Update Password</h6>
+                                        <p class="text-muted small mb-0">Change your login credentials to stay secure.</p>
+                                    </div>
+                                </div>
+                                <a href="/accounts/password_change/" class="btn btn-white border rounded-pill px-4 fw-bold small">Process Change</a>
+                            </div>
+
+                            <div class="p-4 bg-primary bg-opacity-10 border border-primary border-opacity-25 rounded-4">
+                                <div class="d-flex align-items-start gap-3">
+                                    <div class="text-primary mt-1"><i class="fas fa-circle-info fa-lg"></i></div>
+                                    <div>
+                                        <h6 class="fw-bold mb-1 text-primary">Privacy Guarantee</h6>
+                                        <p class="text-dark opacity-75 small mb-0">All your healthcare records, prescriptions, and personal metadata are stored in compliance with the DISHA (Digital Information Security in Healthcare Act) guidelines of Bharat.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Custom active state for sidebar items
+    document.querySelectorAll('[data-bs-toggle="tab"]').forEach(tab => {
+        tab.addEventListener('shown.bs.tab', function (event) {
+            document.querySelectorAll('.profile-nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            event.target.classList.add('active');
+        });
+    });
+</script>
+
+<style>
+    .backdrop-blur { backdrop-filter: blur(10px); }
+    .bg-primary-light { background-color: var(--primary-light); }
+    .bg-success-light { background-color: var(--success-light); }
+    .bg-danger-light { background-color: #fee2e2; }
+    .fw-black { font-weight: 900; }
+    .sidebar-card { 
+        border: 1px solid var(--border-color); 
+        border-radius: var(--radius-md);
+        box-shadow: var(--shadow);
+    }
+</style>
+{% endblock %}

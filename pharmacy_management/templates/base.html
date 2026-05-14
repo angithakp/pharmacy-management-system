@@ -1,0 +1,218 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jan Aushadhi Kendra | Generic Medicines Kunhipally</title>
+    <meta name="description" content="Official PM Jan Aushadhi Kendra Kunhipally. Quality generic medicines at affordable prices.">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+
+<body>
+
+    <!-- NAVBAR -->
+    <nav class="navbar navbar-expand-lg sticky-top shadow-sm">
+        <div class="container">
+
+            <!-- BRAND -->
+            <a class="navbar-brand d-flex align-items-center" href="/">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTJuQKniJmO5eQ79LsLtMCdZF11xZhx2C0SFQ&s"
+                    class="brand-logo" alt="Jan Aushadhi Logo">
+                <div class="brand-text-wrapper ms-2">
+                    <span class="brand-text d-block">Jan Aushadhi</span>
+                    <small class="text-muted extra-small d-block mt-n1" style="font-size: 0.65rem; font-weight: 600;">Kunhipally Kendra</small>
+                </div>
+            </a>
+
+            <button class="navbar-toggler border-0 shadow-none" type="button" data-bs-toggle="collapse"
+                data-bs-target="#nav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div id="nav" class="collapse navbar-collapse">
+
+                <!-- MAIN MENU -->
+                <ul class="navbar-nav mx-auto">
+                    <li class="nav-item"><a class="nav-link {% if request.path == '/' %}active{% endif %}"
+                            href="/">Home</a></li>
+                    <li class="nav-item"><a class="nav-link {% if '/medicines' in request.path %}active{% endif %}"
+                            href="{% url 'medicines' %}">Medicines</a></li>
+                    <li class="nav-item"><a class="nav-link {% if '/about' in request.path %}active{% endif %}"
+                            href="{% url 'about' %}">About Us</a></li>
+                    <li class="nav-item"><a class="nav-link {% if '/contact' in request.path %}active{% endif %}"
+                            href="{% url 'contact' %}">Contact</a></li>
+                </ul>
+
+                <!-- USER ACTIONS -->
+                <div class="d-flex align-items-center gap-3">
+
+                    {% if user.is_authenticated %}
+
+                        {% if user.is_staff %}
+                        <a href="{% url 'admin_dashboard' %}" class="btn btn-outline-primary btn-sm px-3 position-relative rounded-pill">
+                            <i class="fas fa-chart-line me-1"></i> Dashboard
+                            {% if unread_messages_count > 0 %}
+                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                {{ unread_messages_count }}
+                            </span>
+                            {% endif %}
+                        </a>
+                        {% else %}
+                        <a href="{% url 'my_orders' %}" class="btn btn-outline-primary btn-sm px-3 rounded-pill d-none d-md-inline-block">
+                            <i class="fas fa-box-open me-1"></i> Orders
+                        </a>
+                        {% endif %}
+
+                        <!-- USER DROPDOWN -->
+                        <div class="dropdown">
+                            <button class="btn btn-primary btn-sm px-4 rounded-pill dropdown-toggle shadow-sm" type="button"
+                                data-bs-toggle="dropdown">
+                                <i class="fas fa-user-circle me-1"></i> Profile
+                            </button>
+
+                            <ul class="dropdown-menu dropdown-menu-end border-0 shadow-lg mt-3 py-3 animate-up"
+                                style="border-radius: 20px; min-width: 220px;">
+                                <li class="px-3 mb-2">
+                                    <div class="fw-bold text-dark small">{{ user.first_name|default:user.username }}</div>
+                                    <div class="text-muted extra-small">{{ user.email }}</div>
+                                </li>
+                                <li><hr class="dropdown-divider opacity-50"></li>
+                                <li><a class="dropdown-item py-2" href="{% url 'user_profile' %}"><i
+                                            class="fas fa-user-gear me-2 text-primary"></i> Account Settings</a></li>
+                                <li><a class="dropdown-item py-2" href="{% url 'my_orders' %}"><i
+                                            class="fas fa-clock-rotate-left me-2 text-success"></i> Order History</a></li>
+                                <li><a class="dropdown-item py-2 d-flex justify-content-between align-items-center"
+                                        href="{% url 'user_messages' %}">
+                                        <span><i class="fas fa-message me-2 text-info"></i> Support Chat</span>
+                                        {% if unread_messages_count > 0 %}
+                                        <span class="badge rounded-pill bg-danger px-2">{{ unread_messages_count }}</span>
+                                        {% endif %}
+                                    </a></li>
+                                <li>
+                                    <hr class="dropdown-divider opacity-50">
+                                </li>
+                                <li><a class="dropdown-item py-2 text-danger fw-600" href="{% url 'logout' %}"><i
+                                            class="fas fa-power-off me-2"></i> Sign Out</a></li>
+                            </ul>
+                        </div>
+
+                    {% else %}
+                    <a href="{% url 'user_login' %}" class="btn btn-primary px-4 rounded-pill shadow-sm">
+                        <i class="fas fa-user-lock me-1"></i> Secure Login
+                    </a>
+                    {% endif %}
+
+                </div>
+
+            </div>
+        </div>
+    </nav>
+
+
+    <main>
+        {% if messages %}
+        <div class="container">
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show rounded-4 border-0 shadow-sm mb-4 animate-up"
+                role="alert">
+                <div class="d-flex align-items-center">
+                    {% if message.tags == 'success' %}
+                        <div class="bg-success text-white rounded-circle p-2 me-3" style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;">
+                            <i class="fas fa-check small"></i>
+                        </div>
+                    {% elif message.tags == 'error' or message.tags == 'danger' %}
+                        <div class="bg-danger text-white rounded-circle p-2 me-3" style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;">
+                            <i class="fas fa-times small"></i>
+                        </div>
+                    {% else %}
+                        <div class="bg-primary text-white rounded-circle p-2 me-3" style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;">
+                            <i class="fas fa-info small"></i>
+                        </div>
+                    {% endif %}
+                    <div>{{ message }}</div>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- FOOTER -->
+    <footer id="contact" class="footer mt-5 pb-4">
+        <div class="container">
+            <div class="row g-5">
+                <div class="col-lg-5">
+                    <div class="mb-4">
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTJuQKniJmO5eQ79LsLtMCdZF11xZhx2C0SFQ&s"
+                        height="50" alt="Logo" class="mb-3">
+                        <h5 class="fw-bold mb-3">PM Jan Aushadhi Kendra</h5>
+                        <p class="text-muted small pe-lg-5">Quality generic medicines made accessible to every citizen of India. Our Kunhipally branch is committed to providing WHO-GMP certified affordable healthcare solutions under the Pradhan Mantri Bhartiya Janaushadhi Pariyojana.</p>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <h6 class="fw-bold text-dark mb-4">Explore Links</h6>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="/" class="text-decoration-none text-muted small hover-primary"><i class="fas fa-chevron-right me-1 extra-small"></i> Home Page</a></li>
+                        <li class="mb-2"><a href="{% url 'medicines' %}" class="text-decoration-none text-muted small hover-primary"><i class="fas fa-chevron-right me-1 extra-small"></i> Medicine Catalog</a></li>
+                        <li class="mb-2"><a href="{% url 'about' %}" class="text-decoration-none text-muted small hover-primary"><i class="fas fa-chevron-right me-1 extra-small"></i> About Our Kendra</a></li>
+                        <li class="mb-2"><a href="{% url 'user_profile' %}" class="text-decoration-none text-muted small hover-primary"><i class="fas fa-chevron-right me-1 extra-small"></i> My Account</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <h6 class="fw-bold text-dark mb-4">Official Contact</h6>
+                    <div class="d-flex gap-3 mb-3">
+                        <div class="text-primary"><i class="fas fa-location-dot"></i></div>
+                        <p class="text-muted small mb-0">Royal Tower, Kunhipally, Chombala (po),<br>Kozhikode, Kerala - 673308</p>
+                    </div>
+                    <div class="d-flex gap-3 mb-3">
+                        <div class="text-primary"><i class="fas fa-phone-alt"></i></div>
+                        <p class="text-muted small mb-0">+91 9207253986</p>
+                    </div>
+                    <div class="d-flex gap-3">
+                        <div class="text-primary"><i class="fas fa-clock"></i></div>
+                        <p class="text-muted small mb-0">Open Daily: 08:30 AM - 09:30 PM</p>
+                    </div>
+                </div>
+            </div>
+            <div class="border-top pt-4 mt-5 text-center">
+                <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+                    <p class="mb-0 text-muted extra-small">© 2026 PMBI Jan Aushadhi Kendra Kunhipally. All rights reserved.</p>
+                    <div class="extra-small text-muted">A Government of India Initiative</div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    {% if user.is_authenticated and not user.is_staff %}
+    <a href="{% url 'user_messages' %}" class="chat-button" title="Pharmacist Support">
+        <i class="fas fa-comment-medical"></i>
+        {% if unread_messages_count > 0 %}
+        <span class="position-absolute translate-middle badge rounded-pill bg-danger"
+            style="top: 10px; right: -5px; font-size: 0.65rem; border: 2px solid white;">
+            {{ unread_messages_count }}
+        </span>
+        {% endif %}
+    </a>
+    {% endif %}
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <style>
+        .hover-primary:hover {
+            color: var(--primary) !important;
+            padding-left: 5px;
+            transition: all 0.3s ease;
+        }
+        .mt-n1 { margin-top: -0.25rem !important; }
+        .extra-small { font-size: 0.75rem; }
+        .fw-600 { font-weight: 600; }
+    </style>
+</body>
+
+</html>

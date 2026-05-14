@@ -1,0 +1,46 @@
+{% extends 'emails/base_email.html' %}
+{% block email_content %}
+
+<div style="margin-bottom: 40px; text-align: left;">
+    <span class="status-pill" style="background-color: #fef2f2; color: #dc2626;">ORDER REJECTED</span>
+    <h2 style="margin: 0; font-size: 28px; font-weight: 800; color: #0f172a; letter-spacing: -0.02em;">Review
+        Unsuccessful</h2>
+    <p style="margin: 6px 0 0 0; font-size: 15px; color: #64748b;">Reference ID: {{ order.formatted_id }} Update</p>
+</div>
+
+<p style="margin-top: 0; font-size: 17px; color: #1e293b; font-weight: 700;">Hello {{ patient_name|default:"Patient" }},
+</p>
+<p style="line-height: 1.7; color: #475569; font-size: 15px;">
+    We regret to inform you that your medical order
+    <strong>{{ order.formatted_id }}</strong>
+    at <strong>Janaushadhi Kendra Kunhipally</strong> could not be processed following our pharmacist review.
+</p>
+
+<div class="highlight-card" style="background-color: #fef2f2; border: 1px solid #fee2e2; padding: 35px;">
+    <h4
+        style="margin: 0 0 15px 0; color: #991b1b; font-size: 13px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em;">
+        Rejection Details</h4>
+    <p style="margin: 0; color: #b91c1c; font-size: 15px; line-height: 1.6; font-weight: 600;">
+        {{ reason|default:"Pharmacist found discrepancy in prescription or medicine manifest." }}
+    </p>
+</div>
+
+<div style="margin: 40px 0; padding: 30px; background-color: #f8fafc; border-radius: 20px; border: 1px solid #e2e8f0;">
+    <h6 style="margin: 0 0 12px 0; font-weight: 800; color: #1e293b;">Next Steps for Process Correction:</h6>
+    <ul style="margin: 0; padding: 0 0 0 20px; color: #64748b; font-size: 14px; line-height: 1.8;">
+        <li>Ensure you upload a clear, valid prescription.</li>
+        <li>Verify if the medicines requested match the prescription exactly.</li>
+        <li>Check if the patient name on prescription matches the profile.</li>
+    </ul>
+</div>
+
+<div style="text-align: center; margin-top: 45px;">
+    <a href="http://127.0.0.1:8000/medicines/" class="btn"
+        style="background-color: #dc2626; box-shadow: 0 4px 12px rgba(220, 38, 38, 0.2);">Browse Medicines & Retry</a>
+    <p style="margin: 20px 0 0 0; font-size: 13px; color: #94a3b8; line-height: 1.5;">
+        You can also contact our pharmacist directly for clarification
+        regarding why this order was declined.
+    </p>
+</div>
+
+{% endblock %}

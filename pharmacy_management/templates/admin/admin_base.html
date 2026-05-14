@@ -1,0 +1,199 @@
+﻿{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel | Jan Aushadhi</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'css/admin.css' %}">
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- Select2 -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+</head>
+
+<body>
+
+    <div class="d-flex">
+
+        <!-- ========== SIDEBAR ========== -->
+        <aside class="admin-sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <a href="/" class="sidebar-brand">
+                    <i class="fas fa-hospital-user text-primary"></i>
+                    <span>ADMIN PANEL</span>
+                </a>
+            </div>
+
+            <nav class="nav-links">
+                <a href="{% url 'admin_dashboard' %}"
+                    class="{% if request.path == '/admin/dashboard/' %}active{% endif %}">
+                    <i class="fas fa-chart-line"></i> <span>Dashboard</span>
+                </a>
+
+                <a href="{% url 'admin_orders' %}" class="{% if 'admin/orders' in request.path %}active{% endif %}">
+                    <i class="fas fa-shopping-cart"></i> <span>Orders</span>
+                </a>
+
+                <a href="{% url 'walkin_order' %}" class="{% if 'walkin-order' in request.path %}active{% endif %}">
+                    <i class="fas fa-walking"></i> <span>Walk-in Order</span>
+                </a>
+
+                <a href="{% url 'admin_medicines' %}"
+                    class="{% if 'admin-medicines' in request.path %}active{% endif %}">
+                    <i class="fas fa-capsules"></i> <span>Medicines</span>
+                </a>
+
+                <a href="{% url 'admin_inventory' %}"
+                    class="{% if 'admin-inventory' in request.path %}active{% endif %}">
+                    <i class="fas fa-boxes-stacked"></i> <span>Inventory</span>
+                </a>
+
+                <a href="{% url 'admin_reports' %}" class="{% if 'admin-reports' in request.path %}active{% endif %}">
+                    <i class="fas fa-file-invoice-dollar"></i> <span>Reports</span>
+                </a>
+
+                <a href="{% url 'admin_users' %}" class="{% if 'admin/users' in request.path %}active{% endif %}">
+                    <i class="fas fa-users-gear"></i> <span>User Control</span>
+                </a>
+
+                <a href="{% url 'admin_messages' %}" class="{% if 'admin/messages' in request.path %}active{% endif %}">
+                    <i class="fas fa-envelope-open-text"></i> <span>Messages</span>
+                </a>
+
+                <div class="mt-4 px-3">
+                    <hr class="border-secondary opacity-20">
+                </div>
+
+                <a href="{% url 'logout' %}" class="logout-link mt-2">
+                    <i class="fas fa-power-off"></i> <span>Logout</span>
+                </a>
+            </nav>
+        </aside>
+
+        <!-- ========== MAIN CONTENT ========== -->
+        <main class="admin-content">
+
+            <!-- TOP BAR -->
+            <header class="admin-topbar shadow-sm">
+                <div class="d-flex align-items-center">
+                    <button class="btn btn-outline-dark btn-sm rounded-pill me-2 d-none d-lg-block"
+                        id="sidebarMiniToggle" title="Collapse Sidebar">
+                        <i class="fas fa-indent"></i>
+                    </button>
+                    <button class="btn btn-primary btn-sm rounded-pill me-3" id="sidebarToggle" title="Show/Hide Menu">
+                        <i class="fas fa-bars"></i>
+                    </button>
+
+                    <h5 class="mb-0 fw-bold d-none d-md-block ms-1">Jan Aushadhi <span
+                            class="text-primary font-monospace small opacity-50">PRO-CORE</span></h5>
+                </div>
+
+                <div class="d-flex align-items-center gap-2">
+                    <button class="btn btn-light btn-sm rounded-pill px-3 d-none d-xl-block" id="browserFullscreen"
+                        title="Browser Fullscreen">
+                        <i class="fas fa-expand me-1"></i> Full View
+                    </button>
+
+                    <div class="dropdown">
+                        <button class="btn btn-dark btn-sm rounded-pill px-4 shadow-sm dropdown-toggle" type="button"
+                            data-bs-toggle="dropdown">
+                            <i class="fas fa-user-shield me-1 text-primary small"></i> Administrator
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-3 p-2 rounded-4">
+                            <li><a class="dropdown-item rounded-3 py-2" href="/"><i
+                                        class="fas fa-globe me-2 text-muted"></i> Live Website</a></li>
+                            <li>
+                                <hr class="dropdown-divider opacity-10">
+                            </li>
+                            <li><a class="dropdown-item text-danger rounded-3 py-2" href="{% url 'logout' %}"><i
+                                        class="fas fa-sign-out-alt me-2"></i> Logout System</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </header>
+
+            <div class="content-wrapper p-4">
+                {% if messages %}
+                <div class="mb-4">
+                    {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show rounded-4 border-0 shadow-sm mb-3"
+                        role="alert">
+                        {% if message.tags == 'success' %}
+                        <i class="fas fa-check-circle me-2 text-success"></i>
+                        {% endif %}
+                        {% if message.tags == 'error' %}
+                        <i class="fas fa-exclamation-circle me-2 text-danger"></i>
+                        {% endif %}
+                        {% if message.tags == 'warning' %}
+                        <i class="fas fa-triangle-exclamation me-2 text-warning"></i>
+                        {% endif %}
+                        {% if message.tags == 'info' %}
+                        <i class="fas fa-circle-info me-2 text-info"></i>
+                        {% endif %}
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+                {% block content %}{% endblock %}
+            </div>
+
+            <!-- FOOTER -->
+            <footer class="text-center py-4 text-muted small border-top mx-4 mt-5">
+                © 2026 Jan Aushadhi Kendra Kunhipally | Secure Professional Management Panel
+            </footer>
+        </main>
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // SIDEBAR STATE MANAGER
+        const sidebarToggle = document.getElementById('sidebarToggle');
+        const sidebarMiniToggle = document.getElementById('sidebarMiniToggle');
+        const browserFullscreen = document.getElementById('browserFullscreen');
+        const sidebar = document.getElementById('sidebar');
+
+        // Toggle Hidden State (Desktop + Mobile)
+        sidebarToggle?.addEventListener('click', function () {
+            document.body.classList.toggle('sidebar-hidden');
+            document.body.classList.add('full-fluid'); // Remove container constraints
+            sidebar.classList.toggle('active');
+        });
+
+        // Toggle Mini State (Desktop Only)
+        sidebarMiniToggle?.addEventListener('click', function () {
+            document.body.classList.toggle('sidebar-mini');
+            const icon = this.querySelector('i');
+            if (document.body.classList.contains('sidebar-mini')) {
+                icon.className = 'fas fa-outdent';
+            } else {
+                icon.className = 'fas fa-indent';
+            }
+        });
+
+        // Browser Fullscreen Logic
+        browserFullscreen?.addEventListener('click', function () {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen();
+                this.innerHTML = '<i class="fas fa-compress me-1"></i> Windowed';
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                    this.innerHTML = '<i class="fas fa-expand me-1"></i> Full View';
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>

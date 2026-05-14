@@ -1,0 +1,148 @@
+{% extends 'admin/admin_base.html' %}
+{% block content %}
+<div class="container-fluid">
+    <div class="row align-items-center mb-5">
+        <div class="col-md-8">
+            <h2 class="fw-bold text-dark mb-1">Update Order Status</h2>
+            <p class="text-muted">Manage life-cycle of Order {{ order.formatted_id }} belonging to {{ order.patient_name }}</p>
+        </div>
+        <div class="col-md-4 text-md-end">
+            <a href="{% url 'admin_orders' %}" class="btn btn-outline-dark rounded-pill px-4">
+                <i class="fas fa-arrow-left me-2"></i> Back to Orders
+            </a>
+        </div>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <div class="card border-0 shadow-sm overflow-hidden">
+                <div class="card-header bg-white border-0 py-3 ps-4">
+                    <h5 class="fw-bold text-dark mb-0">Status Transition</h5>
+                </div>
+                <div class="card-body p-4 pt-2">
+                    <div class="alert bg-light border-0 d-flex align-items-center mb-4">
+                        <div class="badge status-chip 
+                            {% if order.status == 'submitted' %}status-submitted
+                            {% elif order.status == 'verified' %}status-verified
+                            {% elif order.status == 'billed' %}status-billed
+                            {% elif order.status == 'paid' or order.status == 'delivered' %}status-paid
+                            {% else %}bg-secondary text-white
+                            {% endif %} px-4 py-2 me-3">
+                            {{ order.get_status_display }}
+                        </div>
+                        <div class="text-muted small">Current State</div>
+                    </div>
+
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="mb-4">
+                            <label class="form-label fw-bold text-dark small text-uppercase opacity-75">Target
+                                Status</label>
+                            <select name="status" class="form-select border-0 bg-light p-3 rounded-4" required>
+                                {% if order.status == 'submitted' %}
+                                <option value="submitted" selected>Prescription Submitted</option>
+                                {% else %}
+                                <option value="submitted">Prescription Submitted</option>
+                                {% endif %}
+
+                                {% if order.status == 'verified' %}
+                                <option value="verified" selected>Verified</option>
+                                {% else %}
+                                <option value="verified">Verified</option>
+                                {% endif %}
+
+                                {% if order.status == 'pickup_only' %}
+                                <option value="pickup_only" selected>Store Pickup Only</option>
+                                {% else %}
+                                <option value="pickup_only">Store Pickup Only</option>
+                                {% endif %}
+
+                                {% if order.status == 'rejected' %}
+                                <option value="rejected" selected>Rejected</option>
+                                {% else %}
+                                <option value="rejected">Rejected</option>
+                                {% endif %}
+
+                                {% if order.status == 'out_of_stock' %}
+                                <option value="out_of_stock" selected>Out of Stock</option>
+                                {% else %}
+                                <option value="out_of_stock">Out of Stock</option>
+                                {% endif %}
+
+                                {% if order.status == 'billed' %}
+                                <option value="billed" selected>Bill Generated</option>
+                                {% else %}
+                                <option value="billed">Bill Generated</option>
+                                {% endif %}
+
+                                {% if order.status == 'cod_selected' %}
+                                <option value="cod_selected" selected>Cash on Delivery Selected</option>
+                                {% else %}
+                                <option value="cod_selected">Cash on Delivery Selected</option>
+                                {% endif %}
+
+                                {% if order.status == 'paid' %}
+                                <option value="paid" selected>Payment Completed</option>
+                                {% else %}
+                                <option value="paid">Payment Completed</option>
+                                {% endif %}
+
+                                {% if order.status == 'delivered' %}
+                                <option value="delivered" selected>Delivered</option>
+                                {% else %}
+                                <option value="delivered">Delivered</option>
+                                {% endif %}
+
+                                {% if order.status == 'cancelled' %}
+                                <option value="cancelled" selected>Cancelled</option>
+                                {% else %}
+                                <option value="cancelled">Cancelled</option>
+                                {% endif %}
+                            </select>
+                        </div>
+
+                        <div id="rejection_container" class="mb-4" style="display: none;">
+                            <label class="form-label fw-bold text-dark small text-uppercase opacity-75">Rejection
+                                Reason</label>
+                            <textarea name="rejection_reason" class="form-control border-0 bg-light p-3 rounded-4"
+                                rows="3"
+                                placeholder="E.g. Prescription is expired, unclear, or invalid...">{{ order.rejection_reason|default:'' }}</textarea>
+                        </div>
+
+                        <div class="p-3 bg-primary bg-opacity-10 rounded-4 mb-4">
+                            <div class="d-flex gap-2">
+                                <i class="fas fa-info-circle text-primary mt-1"></i>
+                                <div class="small text-primary">
+                                    Updating status to <strong>Verified</strong>, <strong>Rejected</strong>, or
+                                    <strong>Out of Stock</strong> will
+                                    automatically notify the patient via email.
+                                </div>
+                            </div>
+                        </div>
+
+                        <script>
+                            const statusSelect = document.querySelector('select[name="status"]');
+                            const rejectionContainer = document.getElementById('rejection_container');
+
+                            function toggleRejection() {
+                                if (statusSelect.value === 'rejected') {
+                                    rejectionContainer.style.display = 'block';
+                                } else {
+                                    rejectionContainer.style.display = 'none';
+                                }
+                            }
+
+                            statusSelect.addEventListener('change', toggleRejection);
+                            toggleRejection(); // Initial state
+                        </script>
+
+                        <button type="submit" class="btn btn-dark w-100 rounded-pill py-3 fw-bold shadow-sm">
+                            Confirm State Update
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,190 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<section class="py-2 bg-light compact-form-page" style="min-height: calc(100vh - 70px - 80px);">
+    <div class="container animate-up">
+        <div class="row align-items-center" style="min-height: calc(100vh - 70px - 120px);">
+            <div class="col-lg-5 col-md-8 mx-auto">
+                
+                <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+                    <!-- Top accent line -->
+                    <div class="bg-primary" style="height: 4px;"></div>
+                    
+                    <div class="card-body p-3 p-md-4">
+                        <!-- HEADER -->
+                        <div class="text-center mb-2">
+                            <div class="stat-icon bg-primary-light text-primary mx-auto mb-2 d-flex align-items-center justify-content-center rounded-circle" style="width: 45px; height: 45px; font-size: 1.1rem;">
+                                <i class="fas {% if medicine.prescription_required or not medicine %}fa-file-medical{% else %}fa-cart-shopping{% endif %}"></i>
+                            </div>
+                            <h4 class="fw-black text-dark mb-1" style="font-size: 1.25rem;">
+                                {% if medicine %}
+                                    {% if medicine.prescription_required %}Secure Prescription Order{% else %}Direct Medicine Request{% endif %}
+                                {% else %}
+                                    Submit Prescription
+                                {% endif %}
+                            </h4>
+                            <p class="text-muted tiny-font mb-0">
+                                {% if medicine %}
+                                    Ordering: <span class="fw-bold text-primary">{{ medicine.name }}</span>
+                                    {% if medicine.prescription_required %}
+                                        <span class="badge bg-warning-light text-warning ms-1 border-0 rounded-pill px-2 py-1 tiny-font fw-bold">PRESCRIPTION REQUIRED</span>
+                                    {% else %}
+                                        <span class="badge bg-success-light text-success ms-1 border-0 rounded-pill px-2 py-1 tiny-font fw-bold">DIRECT ORDER</span>
+                                    {% endif %}
+                                {% else %}
+                                    Professional verification by PMBI certified pharmacists.
+                                {% endif %}
+                            </p>
+
+                            {% if medicine.store_pickup_only %}
+                            <div class="bg-info-light text-info p-1 px-2 rounded-2 mt-2 d-inline-flex align-items-center gap-2 tiny-font fw-bold">
+                                <i class="fas fa-store"></i> Store Pickup Only
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- FORM -->
+                        <form method="POST" enctype="multipart/form-data">
+                            {% csrf_token %}
+
+                            <div class="row g-2 mb-2">
+                                <div class="col-md-6">
+                                    <label class="form-label tiny-font fw-bold text-muted text-uppercase ls-1 mb-1">Patient Name</label>
+                                    <div class="input-group bg-light rounded-3 border overflow-hidden">
+                                        <span class="input-group-text bg-transparent border-0 text-muted ps-2 py-0"><i class="fas fa-user-circle extra-small"></i></span>
+                                        <input type="text" name="patient_name" class="form-control border-0 bg-transparent py-1 shadow-none tiny-font" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-6" {% if medicine and not medicine.prescription_required %}style="display:none;"{% endif %}>
+                                    <label class="form-label tiny-font fw-bold text-muted text-uppercase ls-1 mb-1">Doctor/Clinic</label>
+                                    <div class="input-group bg-light rounded-3 border overflow-hidden">
+                                        <span class="input-group-text bg-transparent border-0 text-muted ps-2 py-0"><i class="fas fa-user-md extra-small"></i></span>
+                                        <input type="text" name="doctor_name" class="form-control border-0 bg-transparent py-1 shadow-none tiny-font" {% if not medicine or medicine.prescription_required %}required{% endif %}>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row g-2 mb-2">
+                                <div class="{% if medicine %}col-md-4{% else %}col-md-6{% endif %}">
+                                    <label class="form-label tiny-font fw-bold text-muted text-uppercase ls-1 mb-1">WhatsApp No.</label>
+                                    <div class="input-group bg-light rounded-3 border overflow-hidden">
+                                        <span class="input-group-text bg-transparent border-0 text-muted ps-2 py-0"><i class="fas fa-phone-alt extra-small"></i></span>
+                                        <input type="tel" name="mobile" class="form-control border-0 bg-transparent py-1 shadow-none tiny-font" required>
+                                    </div>
+                                </div>
+                                <div class="{% if medicine %}col-md-4{% else %}col-md-6{% endif %}">
+                                    <label class="form-label tiny-font fw-bold text-muted text-uppercase ls-1 mb-1">Pincode</label>
+                                    <div class="input-group bg-light rounded-3 border overflow-hidden">
+                                        <span class="input-group-text bg-transparent border-0 text-muted ps-2 py-0"><i class="fas fa-location-dot extra-small"></i></span>
+                                        <input type="text" name="pincode" class="form-control border-0 bg-transparent py-1 shadow-none tiny-font" required>
+                                    </div>
+                                </div>
+                                {% if medicine %}
+                                <div class="col-md-4">
+                                    <label class="form-label tiny-font fw-bold text-muted text-uppercase ls-1 mb-1">Quantity</label>
+                                    <div class="input-group bg-light rounded-3 border overflow-hidden">
+                                        <span class="input-group-text bg-transparent border-0 text-muted ps-2 py-0"><i class="fas fa-list-ol extra-small"></i></span>
+                                        <input type="number" name="quantity" class="form-control border-0 bg-transparent py-1 shadow-none tiny-font" value="1" min="1" required>
+                                    </div>
+                                </div>
+                                {% endif %}
+                            </div>
+
+                            <div class="mb-2">
+                                <label class="form-label tiny-font fw-bold text-muted text-uppercase ls-1 mb-1">Delivery Address</label>
+                                <div class="input-group bg-light rounded-3 border overflow-hidden align-items-start">
+                                    <span class="input-group-text bg-transparent border-0 text-muted ps-2 pt-1"><i class="fas fa-house-medical extra-small"></i></span>
+                                    <textarea name="address" class="form-control border-0 bg-transparent py-1 shadow-none tiny-font" rows="1" style="min-height: 40px;" placeholder="Street, Building, Landmark..." required></textarea>
+                                </div>
+                            </div>
+
+                            <div class="mb-3" {% if medicine and not medicine.prescription_required %}style="display:none;"{% endif %}>
+                                <label class="form-label tiny-font fw-bold text-muted text-uppercase ls-1 mb-1">Prescription Document</label>
+                                <div class="file-upload-zone p-2 text-center bg-light border-2 border-dashed rounded-3 cursor-pointer transition-all" onclick="document.getElementById('fileInput').click()" style="border-width: 1px !important;">
+                                    <input type="file" id="fileInput" name="prescription_file" class="d-none" {% if not medicine or medicine.prescription_required %}required{% endif %} onchange="updateFileName(this)">
+                                    <div id="upload-placeholder">
+                                        <div class="stat-icon bg-white text-primary mx-auto mb-1 shadow-sm d-flex align-items-center justify-content-center rounded-circle" style="width: 32px; height: 32px; font-size: 0.8rem;">
+                                            <i class="fas fa-cloud-arrow-up"></i>
+                                        </div>
+                                        <h6 class="fw-bold text-dark mb-0 tiny-font">Click to Upload Document</h6>
+                                        <p class="text-muted tiny-font mb-0">Max 5MB (JPG, PNG, PDF)</p>
+                                    </div>
+                                    <div id="fileName" class="fw-bold text-primary tiny-font d-none"></div>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary w-100 rounded-pill py-2 fw-black shadow-lg tiny-font">
+                                <i class="fas {% if medicine.prescription_required or not medicine %}fa-paper-plane{% else %}fa-shopping-basket{% endif %} me-2"></i>
+                                {% if medicine and not medicine.prescription_required %}CONFIRM ORDER{% else %}SUBMIT FOR VERIFICATION{% endif %}
+                            </button>
+                            
+                            <p class="text-center mt-2 text-muted tiny-font mb-0">
+                                <i class="fas fa-shield-halved me-1"></i> Data protected with 256-bit encryption.
+                            </p>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    // Flag the body for page-specific footer styling
+    document.body.classList.add('compact-page-body');
+
+    function updateFileName(input) {
+        const placeholder = document.getElementById('upload-placeholder');
+        const fileNameDiv = document.getElementById('fileName');
+        if (input.files && input.files[0]) {
+            placeholder.classList.add('d-none');
+            fileNameDiv.classList.remove('d-none');
+            fileNameDiv.innerHTML = `<div class="bg-white p-2 rounded-3 border shadow-sm d-inline-block">
+                <i class="fas fa-file-image text-danger me-2"></i> ${input.files[0].name}
+                <div class="tiny-font text-muted mt-0">Ready for submission</div>
+            </div>`;
+        }
+    }
+</script>
+
+<style>
+    .ls-1 { letter-spacing: 0.1rem; }
+    .extra-small { font-size: 0.75rem; }
+    .tiny-font { font-size: 0.65rem; }
+    .fw-black { font-weight: 900; }
+    .bg-primary-light { background-color: var(--primary-light); }
+    .bg-info-light { background-color: #f0f9ff; }
+    .bg-warning-light { background-color: #fefce8; }
+    .bg-success-light { background-color: #f0fdf4; }
+    .text-warning { color: #854d0e !important; }
+    .text-info { color: #075985 !important; }
+    .border-dashed { border-style: dashed !important; }
+    .cursor-pointer { cursor: pointer; }
+    .file-upload-zone:hover {
+        border-color: var(--primary) !important;
+        background-color: var(--primary-light) !important;
+    }
+    
+    /* Global Overrides for this page only */
+    .compact-page-body footer {
+        margin-top: 0.5rem !important;
+        padding-bottom: 0.5rem !important;
+    }
+    .compact-page-body footer .row.g-5 {
+        display: none !important;
+    }
+    .compact-page-body footer .border-top {
+        margin-top: 0.5rem !important;
+        padding-top: 0.5rem !important;
+    }
+    .compact-page-body .chat-button {
+        bottom: 15px !important;
+        right: 15px !important;
+        width: 45px !important;
+        height: 45px !important;
+        font-size: 1.2rem !important;
+    }
+</style>
+
+{% endblock %}

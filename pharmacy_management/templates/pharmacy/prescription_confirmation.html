@@ -1,0 +1,314 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<section class="py-3 bg-light-modern compact-confirmation" style="min-height: calc(100vh - 70px - 80px); display: flex; align-items: center;">
+    <div class="container animate-up">
+        
+        <div class="max-w-600 mx-auto">
+            <!-- PREMIUM CONFIRMATION CARD -->
+            <div class="card border-0 shadow-2xl rounded-5 overflow-hidden mb-3">
+                
+                <!-- TOP DECORATIVE ELEMENT -->
+                <div class="success-header-bg">
+                    <div class="confetti-canvas" id="confetti"></div>
+                </div>
+                
+                <div class="card-body p-3 p-md-4 text-center position-relative">
+                    
+                    <!-- DYNAMIC SUCCESS ICON -->
+                    <div class="success-animation-wrapper mb-2">
+                        <div class="check-container-small">
+                            <div class="check-background"></div>
+                            <i class="fas fa-check check-mark-small"></i>
+                        </div>
+                        <div class="sparkle s1"></div>
+                        <div class="sparkle s2"></div>
+                        <div class="sparkle s3"></div>
+                    </div>
+
+                    <div class="mb-3">
+                        <span class="badge-success-outline mb-1">Order Confirmed</span>
+                        <h2 class="fw-900 text-dark mb-2" style="font-size: 1.6rem;">Prescription Submitted</h2>
+                        <p class="text-muted mx-auto mb-0 tiny-font" style="max-width: 450px;">
+                            Your medical prescription has been securely transmitted to the <span class="fw-bold text-primary">PMBJK Kendra</span> vault for immediate pharmacist validation.
+                        </p>
+                    </div>
+
+                    <!-- DATA HUD - REFINED -->
+                    <div class="manifest-hud rounded-4 p-3 mb-3">
+                        <div class="row g-2 text-start">
+                            <div class="col-sm-6">
+                                <div class="hud-item pr-3">
+                                    <label>Order Reference</label>
+                                    <span class="d-block fw-900 text-primary h5 mb-0">{{ order.formatted_id }}</span>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="hud-item border-start-sm">
+                                    <label>Patient Identity</label>
+                                    <span class="d-block fw-bold text-dark text-truncate tiny-font">{{ order.patient_name|upper }}</span>
+                                </div>
+                            </div>
+                            <div class="col-12 py-0"><hr class="my-1 opacity-5"></div>
+                            <div class="col-sm-6">
+                                <div class="hud-item">
+                                    <label>Clinical Status</label>
+                                    <span class="d-flex align-items-center fw-bold text-success tiny-font">
+                                        <div class="status-pulse-green me-1"></div> Secured & Received
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="hud-item border-start-sm">
+                                    <label>Next Protocol</label>
+                                    <span class="badge-awaiting-tiny">Pharmacist Review</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- PHARMACIST INFO -->
+                    <div class="pharmacist-notice mb-4">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="notice-icon-small"><i class="fas fa-user-doctor"></i></div>
+                            <div class="text-start">
+                                <h6 class="fw-bold mb-0 small">Review in Progress</h6>
+                                <p class="tiny-font text-muted mb-0">Registered professionals are auditing molecules for safety and checking Kendra stock availability.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ACTION BUTTONS -->
+                    <div class="row g-2">
+                        <div class="col-md-7">
+                            <a href="{% url 'order_detail_user' order.id %}" class="btn btn-premium-primary w-100 rounded-pill py-2 tiny-font">
+                                <span class="btn-content">
+                                    <i class="fas fa-magnifying-glass-plus me-1"></i> Monitor Fulfillment
+                                </span>
+                            </a>
+                        </div>
+                        <div class="col-md-5">
+                            <a href="{% url 'home' %}" class="btn btn-premium-light w-100 rounded-pill py-2 tiny-font">
+                                <i class="fas fa-house me-1"></i> Home Gateway
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <p class="text-center text-muted tiny-font fw-medium opacity-75 mb-0">
+                <i class="fas fa-shield-halved me-1 text-primary"></i> Powered by PMBJK Secure Health System &bull; ID: {{ order.formatted_id }}
+            </p>
+        </div>
+
+    </div>
+</section>
+
+<script>
+    // Flag the body for page-specific footer styling
+    document.body.classList.add('compact-page-body');
+</script>
+
+<style>
+    :root {
+        --primary-main: #00418c;
+        --success-main: #10b981;
+        --bg-modern: #f0f4f8;
+    }
+
+    .bg-light-modern { background-color: var(--bg-modern); }
+    .max-w-600 { max-width: 600px; }
+    .fw-900 { font-weight: 900; }
+    .tiny-font { font-size: 0.65rem; }
+    .rounded-5 { border-radius: 1.5rem !important; }
+    .shadow-2xl { box-shadow: 0 15px 40px -10px rgba(0, 0, 0, 0.1); }
+
+    /* Header Background */
+    .success-header-bg {
+        height: 8px;
+        background: linear-gradient(90deg, #00418c, #0066cc, #00418c);
+        background-size: 200% 100%;
+        animation: gradientMove 3s linear infinite;
+    }
+
+    @keyframes gradientMove {
+        0% { background-position: 0% 50%; }
+        100% { background-position: 200% 50%; }
+    }
+
+    /* Success Animation */
+    .success-animation-wrapper {
+        position: relative;
+        width: 80px;
+        height: 80px;
+        margin: 0 auto;
+    }
+
+    .check-container-small {
+        width: 50px;
+        height: 50px;
+        position: absolute;
+        top: 15px;
+        left: 15px;
+        background: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 5px 15px rgba(0, 65, 140, 0.1);
+        z-index: 2;
+    }
+
+    .check-background {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background: var(--primary-main);
+        border-radius: 50%;
+        transform: scale(0);
+        animation: popIn 0.5s forwards 0.2s;
+    }
+
+    .check-mark-small {
+        color: white;
+        font-size: 1.5rem;
+        z-index: 3;
+        transform: scale(0);
+        animation: popIn 0.3s forwards 0.6s;
+    }
+
+    @keyframes popIn {
+        to { transform: scale(1); }
+    }
+
+    /* Sparkles */
+    .sparkle {
+        position: absolute;
+        background: var(--primary-main);
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        opacity: 0;
+    }
+
+    .s1 { top: 10%; left: 20%; animation: sparkleAnim 1.5s infinite 0.8s; }
+    .s2 { top: 20%; right: 10%; animation: sparkleAnim 1.5s infinite 1.2s; }
+    .s3 { bottom: 15%; left: 30%; animation: sparkleAnim 1.5s infinite 1s; }
+
+    @keyframes sparkleAnim {
+        0% { transform: scale(0); opacity: 0; }
+        50% { transform: scale(1.5); opacity: 0.5; }
+        100% { transform: scale(0); opacity: 0; }
+    }
+
+    .badge-success-outline {
+        display: inline-block;
+        padding: 0.25rem 0.75rem;
+        background: rgba(16, 185, 129, 0.08);
+        color: var(--success-main);
+        border-radius: 50px;
+        font-size: 0.65rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.05rem;
+    }
+
+    .manifest-hud {
+        background: #f8fafc;
+        border: 1px solid #edf2f7;
+    }
+
+    .hud-item label {
+        display: block;
+        font-size: 0.6rem;
+        font-weight: 800;
+        color: #94a3b8;
+        text-transform: uppercase;
+        letter-spacing: 0.05rem;
+        margin-bottom: 0.15rem;
+    }
+
+    .border-start-sm { border-left: 1px solid #e2e8f0; padding-left: 1rem; }
+
+    .status-pulse-green {
+        width: 6px;
+        height: 6px;
+        background: var(--success-main);
+        border-radius: 50%;
+        animation: pulseGreen 2s infinite;
+    }
+
+    @keyframes pulseGreen {
+        0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
+        70% { box-shadow: 0 0 0 5px rgba(16, 185, 129, 0); }
+        100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+    }
+
+    .badge-awaiting-tiny {
+        background: #fff8eb;
+        color: #d97706;
+        padding: 0.1rem 0.5rem;
+        border-radius: 50px;
+        font-size: 0.6rem;
+        font-weight: 700;
+    }
+
+    .pharmacist-notice {
+        background: #f1f7ff;
+        border-left: 3px solid var(--primary-main);
+        padding: 0.75rem;
+        border-radius: 0 0.5rem 0.5rem 0;
+    }
+
+    .notice-icon-small {
+        width: 32px;
+        height: 32px;
+        background: white;
+        color: var(--primary-main);
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1rem;
+        box-shadow: 0 3px 10px rgba(0, 65, 140, 0.1);
+    }
+
+    .btn-premium-primary {
+        background: linear-gradient(135deg, #00418c 0%, #0066cc 100%);
+        color: white;
+        border: none;
+        font-weight: 800;
+        transition: all 0.3s ease;
+    }
+
+    .btn-premium-light {
+        background: white;
+        color: #475569;
+        border: 1px solid #e2e8f0;
+        font-weight: 700;
+        transition: all 0.3s ease;
+    }
+    
+    /* Global Overrides for this page only */
+    .compact-page-body footer {
+        margin-top: 0.5rem !important;
+        padding-bottom: 0.5rem !important;
+    }
+    .compact-page-body footer .row.g-5 {
+        display: none !important;
+    }
+    .compact-page-body footer .border-top {
+        margin-top: 0.5rem !important;
+        padding-top: 0.5rem !important;
+    }
+    .compact-page-body .chat-button {
+        bottom: 15px !important;
+        right: 15px !important;
+        width: 45px !important;
+        height: 45px !important;
+        font-size: 1.2rem !important;
+    }
+
+</style>
+
+{% endblock %}

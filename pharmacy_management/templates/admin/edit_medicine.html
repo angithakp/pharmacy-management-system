@@ -1,0 +1,98 @@
+{% extends 'admin/admin_base.html' %}
+{% block content %}
+
+<div class="container-fluid py-4">
+
+    <div class="mb-4">
+        <h3 class="fw-bold mb-1">Edit Medicine</h3>
+        <p class="text-muted mb-0">
+            Update medicine details
+        </p>
+    </div>
+
+    <div class="card border-0 shadow-sm">
+        <div class="card-body">
+
+            <form method="POST">
+                {% csrf_token %}
+
+                <div class="row g-4">
+
+                    <div class="col-md-4">
+                        <label class="form-label small text-muted">Medicine Name</label>
+                        <input type="text" name="name" class="form-control"
+                               value="{{ medicine.name }}">
+                    </div>
+
+                    <div class="col-md-3">
+                        <label class="form-label small text-muted">Category</label>
+                        <select name="category" class="form-select">
+                            <option value="Tablets" {% if medicine.category == 'Tablets' %}selected{% endif %}>Tablets</option>
+                            <option value="Syrups" {% if medicine.category == 'Syrups' %}selected{% endif %}>Syrups</option>
+                            <option value="Injections" {% if medicine.category == 'Injections' %}selected{% endif %}>Injections</option>
+                            <option value="Medical Devices" {% if medicine.category == 'Medical Devices' %}selected{% endif %}>Medical Devices</option>
+                            <option value="Personal Care" {% if medicine.category == 'Personal Care' %}selected{% endif %}>Personal Care</option>
+                            <option value="Other" {% if medicine.category == 'Other' %}selected{% endif %}>Other</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-2">
+                        <label class="form-label small text-muted">Price</label>
+                        <input type="number" name="price" class="form-control"
+                               value="{{ medicine.price }}">
+                    </div>
+
+                    <div class="col-md-3">
+                        <label class="form-label small text-muted">Batch Number</label>
+                        <input type="text" name="batch_number" class="form-control"
+                               value="{{ medicine.batch_number }}">
+                    </div>
+
+                    <div class="col-md-3">
+                        <label class="form-label small text-muted">Expiry Date</label>
+                        <input type="date" name="expiry_date" class="form-control"
+                               value="{{ medicine.expiry_date|date:'Y-m-d' }}">
+                    </div>
+
+                    <div class="col-md-2">
+                        <label class="form-label small text-muted">Stock</label>
+                        <input type="number" name="stock" class="form-control"
+                               value="{{ medicine.stock }}">
+                    </div>
+
+                    <div class="col-md-3">
+                        <label class="form-label small text-muted">Prescription Required</label>
+                        <select name="prescription_required" class="form-select">
+                            <option value="False"
+                                {% if not medicine.prescription_required %}selected{% endif %}>
+                                No
+                            </option>
+                            <option value="True"
+                                {% if medicine.prescription_required %}selected{% endif %}>
+                                Yes
+                            </option>
+                        </select>
+                    </div>
+
+                </div>
+
+                <div class="mt-4 d-flex justify-content-between">
+                    <a href="{% url 'admin_medicines' %}"
+                       class="btn btn-outline-secondary">
+                        Cancel
+                    </a>
+
+                    <button type="submit"
+                            class="btn btn-primary">
+                        Update Medicine
+                    </button>
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}

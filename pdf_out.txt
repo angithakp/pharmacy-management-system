@@ -1,0 +1,6 @@
+COLUMNS:
+'Jan Aushadhi Kendra 9/406N, Royal Tower,Near Health Center, Chombala (po), Kunhipally, Kozhikode, 673308 GST No. : Closing Stock Report(07-03-2026)'
+
+FIRST 2 DATA ROWS:
+['Sr No', 'Drug Code', 'Drug Name', 'Batch No', 'Uom', 'Mnf Date', 'Exp Date', 'Qty', 'Purchase Rate', 'Sales Rate', 'Mrp', 'Tax Per', 'Tax Amount', 'Purchase Total', 'Sales Total', 'Mrp Total']
+['1', '369', 'Acarbose Tablets IP 50 mg', 'CT252613 59A', "10's", '11-2025', '10-2027', '140.00', '44.29', '55.36', '58.13', '5.00', '31.00', '620.06', '775.07', '813.82']

@@ -1,0 +1,178 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<section class="py-5 bg-white d-print-block" style="min-height: 95vh; font-family: 'Inter', 'Segoe UI', Arial, sans-serif;">
+    <div class="container">
+        
+        <!-- ACTION BUTTONS - HIDDEN IN PRINT -->
+        <div class="row align-items-center mb-5 d-print-none">
+            <div class="col-md-7 text-center text-md-start mb-4 mb-md-0">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb mb-1 justify-content-center justify-content-md-start">
+                        <li class="breadcrumb-item small fw-bold text-uppercase ls-1"><a href="{% url 'my_orders' %}" class="text-decoration-none text-muted">Orders</a></li>
+                        <li class="breadcrumb-item active small fw-bold text-uppercase ls-1 text-dark" aria-current="page">Invoice</li>
+                    </ol>
+                </nav>
+                <h2 class="fw-black text-dark mb-0">Order Bill</h2>
+            </div>
+            <div class="col-md-5">
+                <div class="d-flex gap-2 w-100 w-md-auto justify-content-center justify-content-md-end">
+                    <button onclick="window.print()" class="btn btn-outline-dark rounded-pill px-4 fw-bold shadow-sm flex-fill flex-md-grow-0" style="min-width: 130px;">
+                        <i class="fas fa-print me-2"></i> Print
+                    </button>
+                    <a href="{% url 'download_invoice' order.id %}" class="btn btn-dark rounded-pill px-4 fw-bold shadow-lg flex-fill flex-md-grow-0" style="min-width: 130px;">
+                        <i class="fas fa-file-download me-2"></i> PDF
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- REFINED BILL DESIGN MATCHING IMAGE -->
+        <div class="receipt-preview mx-auto bg-white p-0" style="max-width: 850px; color: #000; border: 1px solid #ddd;">
+            
+            <div class="p-3 p-md-4 p-lg-5">
+                <!-- 1. HEADER -->
+                <div class="text-center mb-4">
+                    <h1 class="fw-bold mb-2 receipt-title" style="color: #1a2a44; letter-spacing: 0.5px;">PRADHAN MANTRI BHARATIYA JANAUSHADHI KENDRA</h1>
+                    <h6 class="fw-bold mb-3 receipt-subtitle" style="color: #333; letter-spacing: 0.5px;">QUALITY GENERIC MEDICINES AT AFFORDABLE PRICES</h6>
+                    <div style="font-size: 13px; color: #555; line-height: 1.5;">
+                        <p class="mb-0 text-uppercase">Royal Tower, Near Health Center, Chombala (po), Kunhipally, Kozhikode, 673308</p>
+                        <p class="mb-0">Contact: +91 9207253986 | Email: janaushadhikunhipally@gmail.com</p>
+                    </div>
+                </div>
+
+                <!-- 2. INFORMATION BOX (SHADED & SQUARED) -->
+                <div class="p-3 mb-4 border" style="background-color: #f8f9fa; border-radius: 2px; border-color: #dee2e6 !important;">
+                    <div class="row g-3 align-items-center" style="font-size: 14px; text-transform: uppercase;">
+                        <div class="col-sm-8 text-start">
+                            <p class="mb-1 fw-bold">PATIENT: <span class="fw-normal text-dark d-block d-sm-inline ms-sm-2">{{ order.patient_name }}</span></p>
+                            <p class="mb-0 fw-bold">MOBILE: <span class="fw-normal text-dark d-block d-sm-inline ms-sm-2">+91 {{ order.mobile }}</span></p>
+                        </div>
+                        <div class="col-sm-4 text-start text-sm-end">
+                            <p class="mb-1 fw-bold">BILL NO: <span class="fw-normal text-dark d-block d-sm-inline ms-sm-2">{{ order.formatted_id }}</span></p>
+                            <p class="mb-0 fw-bold">DATE: <span class="fw-normal text-dark d-block d-sm-inline ms-sm-2">{{ order.created_at|date:"d/m/Y" }}</span></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. MEDICINE TABLE (CLEAN ROUNDED DESIGN) -->
+                <div class="table-responsive mb-4" style="border: 1.5px solid #000; border-radius: 12px; overflow: hidden;">
+                    <table class="table mb-0" style="border-collapse: separate; border-spacing: 0; border: none; width: 100%;">
+                        <thead>
+                            <tr class="text-center" style="background-color: #f8f9fb;">
+                                <th class="py-2 border-end border-bottom border-dark fw-bold text-dark" style="width: 50px; font-size: 13px;">SL.</th>
+                                <th class="py-2 text-start px-3 border-end border-bottom border-dark fw-bold text-dark" style="font-size: 13px;">MEDICINE NAME</th>
+                                <th class="py-2 border-end border-bottom border-dark fw-bold text-dark" style="width: 60px; font-size: 13px;">QTY</th>
+                                <th class="py-2 border-end border-bottom border-dark fw-bold text-dark" style="width: 100px; font-size: 13px;">MRP</th>
+                                <th class="py-2 border-bottom border-dark fw-bold text-dark" style="width: 120px; font-size: 13px;">AMOUNT</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in order_items %}
+                            <tr class="text-center align-middle">
+                                <td class="py-3 border-end border-bottom border-dark text-dark">{{ forloop.counter }}</td>
+                                <td class="text-start px-3 py-3 border-end border-bottom border-dark text-dark" style="font-size: 13px;">{{ item.medicine_name }}</td>
+                                <td class="py-3 border-end border-bottom border-dark text-dark">{{ item.quantity }}</td>
+                                <td class="py-3 border-end border-bottom border-dark text-dark">{{ item.price|floatformat:2 }}</td>
+                                <td class="text-end px-3 py-3 border-bottom border-dark text-dark">{{ item.subtotal|floatformat:2 }}</td>
+                            </tr>
+                            {% endfor %}
+                            <tr class="fw-bold grand-total-row" style="font-size: 17px; border-top: 2.5px solid #000;">
+                                <td colspan="4" class="text-end py-3 border-end border-dark pe-4" style="background-color: #fdfdfd;">GRAND TOTAL</td>
+                                <td class="text-end py-3 pe-3" style="background-color: #fdfdfd;">Rs.{{ total|floatformat:2 }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- 4. FOOTER -->
+                <div class="text-center mt-4">
+                    <p class="mb-3 text-muted" style="font-size: 12px; line-height: 1.4;">
+                        <span class="fw-bold text-dark text-uppercase">Terms & Conditions:</span> Medicines once sold will not be exchanged. Always consult your doctor before use.
+                    </p>
+                    <div class="fw-bold mb-1 text-dark" style="font-size: 16px; letter-spacing: 0.5px;">*** THANK YOU FOR CHOOSING JAN AUSHADHI ***</div>
+                    <p class="text-muted small mb-0" style="font-size: 11px;">Quality Medicines at Genuine Rate</p>
+                    <p class="text-muted mt-4 italic small opacity-50" style="font-size: 10px;">This is a system generated document. No physical signature required.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- BACK LINK -->
+        <div class="text-center mt-5 d-print-none">
+            <a href="{% url 'my_orders' %}" class="text-muted text-decoration-none fw-bold small text-uppercase ls-1">
+                <i class="fas fa-chevron-left me-2"></i> Return to Dashboard
+            </a>
+        </div>
+
+    </div>
+</section>
+
+<style>
+    .fw-black { font-weight: 900; }
+    .italic { font-style: italic; }
+    .ls-1 { letter-spacing: 1px; }
+    
+    .receipt-preview {
+        box-shadow: 0 10px 40px rgba(0,0,0,0.05);
+        border: 1px solid #eee;
+    }
+
+    .receipt-title { font-size: 26px; }
+    .receipt-subtitle { font-size: 13px; }
+
+    @media (max-width: 768px) {
+        .receipt-title { font-size: 18px !important; }
+        .receipt-subtitle { font-size: 11px !important; }
+        .receipt-preview { border: none !important; }
+        .receipt-preview .p-3 { padding: 1rem !important; }
+        .table th, .table td { font-size: 11px !important; }
+        .grand-total-row { font-size: 14px !important; }
+        
+        /* Force buttons to fill space only on mobile */
+        .d-flex.gap-2.w-100 > .btn {
+            flex: 1 1 auto;
+        }
+    }
+
+    @media print {
+        @page { 
+            margin: 0.5cm;
+            size: portrait;
+        }
+        .navbar, .footer, .d-print-none, .chat-button { display: none !important; }
+        .receipt-preview { 
+            box-shadow: none !important; 
+            border: none !important; 
+            width: 100% !important; 
+            max-width: 100% !important; 
+            padding: 0 !important;
+            margin: 0 !important;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+        }
+        body { background: #fff !important; margin: 0 !important; padding: 0 !important; }
+        section { padding: 0 !important; background: #fff !important; }
+        
+        /* Table Border Fixes for Print */
+        .table-responsive {
+            border: none !important;
+            overflow: visible !important;
+        }
+        table {
+            border: 1.5px solid #000 !important;
+            border-collapse: collapse !important;
+        }
+        th, td {
+            border: 1px solid #000 !important;
+        }
+        .border-dark {
+            border-color: #000 !important;
+        }
+        [style*="background-color"] {
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+        }
+    }
+</style>
+
+{% endblock %}

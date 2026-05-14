@@ -1,0 +1,282 @@
+{% extends 'admin/admin_base.html' %}
+{% block content %}
+
+<div class="container-fluid">
+
+    <!-- ================= PAGE HEADER ================= -->
+    <div class="row mb-5 align-items-center">
+        <div class="col-md-8">
+            <h2 class="fw-bold text-dark mb-1">Medicine Management</h2>
+            <p class="text-muted mb-0">Add, update, and search your pharmacy's medicine database.</p>
+        </div>
+        <div class="col-md-4 text-md-end mt-3 mt-md-0">
+            <button class="btn btn-theme-primary rounded-pill shadow-sm px-4" data-bs-toggle="collapse"
+                data-bs-target="#addMedicineForm">
+                <i class="fas fa-plus-circle me-1"></i> Add New Medicine
+            </button>
+        </div>
+    </div>
+
+    <!-- ================= ADD MEDICINE FORM (COLLAPSIBLE) ================= -->
+    <div class="collapse mb-5" id="addMedicineForm">
+        <div class="card border-0 shadow-sm border-top theme-border-primary border-4">
+            <div class="card-body p-4">
+                <h5 class="fw-bold mb-4">Register New Pharmaceutical Item</h5>
+                <form method="POST">
+                    {% csrf_token %}
+                    <div class="row g-4">
+                        <div class="col-md-4">
+                            <label class="form-label fw-semibold small">Medicine Name</label>
+                            <input type="text" name="name" class="form-control" placeholder="e.g. Paracetamol" required>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label fw-semibold small">Category</label>
+                            <select name="category" class="form-select" required>
+                                <option>Tablets</option>
+                                <option>Syrups</option>
+                                <option>Injections</option>
+                                <option>Medical Devices</option>
+                                <option>Personal Care</option>
+                                <option>Other</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label fw-semibold small">Price (₹)</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light">₹</span>
+                                <input type="number" name="price" class="form-control" step="0.01" required>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label fw-semibold small">Batch Number</label>
+                            <input type="text" name="batch_number" class="form-control" placeholder="BN-XXXXXX">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label fw-semibold small">Expiry Date</label>
+                            <input type="date" name="expiry_date" class="form-control" required>
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label fw-semibold small">Initial Stock</label>
+                            <input type="number" name="stock" class="form-control" required>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label fw-semibold small">Prescription Required</label>
+                            <div class="d-flex gap-3 pt-1">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="prescription_required"
+                                        value="False" checked>
+                                    <label class="form-check-label small">No</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="prescription_required"
+                                        value="True">
+                                    <label class="form-check-label small">Yes</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 d-flex align-items-end">
+                            <button type="submit" class="btn btn-theme-primary w-100 rounded-pill py-2">
+                                <i class="fas fa-save me-1"></i> Confirm & Add to Inventory
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= SUMMARY & SEARCH ================= -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-8">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-3">
+                    <form method="GET" class="d-flex gap-2">
+                        <div class="input-group">
+                            <span class="input-group-text bg-white border-end-0 text-muted">
+                                <i class="fas fa-search"></i>
+                            </span>
+                            <input type="text" name="q" value="{{ request.GET.q }}"
+                                class="form-control border-start-0 ps-0"
+                                placeholder="Search by name, category, or batch number...">
+                        </div>
+                        <button type="submit" class="btn btn-dark px-4 rounded-pill">Find</button>
+                        {% if request.GET.q %}
+                        <a href="{% url 'admin_medicines' %}" class="btn btn-light rounded-pill"><i
+                                class="fas fa-times"></i></a>
+                        {% endif %}
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm theme-bg-soft">
+                <div class="card-body p-3 d-flex align-items-center justify-content-between">
+                    <div>
+                        <h6 class="theme-text-primary fw-bold mb-0">Total Records</h6>
+                        <small class="text-muted">Filtered results</small>
+                    </div>
+                    <h3 class="fw-bold theme-text-primary mb-0">{{ total_medicines }}</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= MEDICINE TABLE ================= -->
+    <div class="card border-0 shadow-sm">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table admin-table mb-0">
+                    <thead>
+                        <tr>
+                            <th class="ps-4">Medicine Info</th>
+                            <th>Identifiers</th>
+                            <th>Financials</th>
+                            <th>Compliance</th>
+                            <th class="text-end pe-4">Stock & Control</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for med in medicines %}
+                        <tr>
+                            <td class="ps-4">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div class="rounded-circle theme-bg-soft p-2 theme-text-primary">
+                                        <i class="fas fa-pills"></i>
+                                    </div>
+                                    <div>
+                                        <div class="fw-bold text-dark">{{ med.name }}</div>
+                                        <div class="text-muted extra-small">{{ med.category }}</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="d-flex align-items-center mb-1">
+                                    <i class="fas fa-barcode text-secondary opacity-50 me-2"
+                                        style="width: 14px; font-size: 0.8rem;"></i>
+                                    <span class="small text-muted">Batch:
+                                        <span class="fw-bold text-dark font-monospace">
+                                            {{ med.batch_number|default:"N/A" }}
+                                        </span>
+                                    </span>
+                                </div>
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-calendar-times text-secondary opacity-50 me-2"
+                                        style="width: 14px; font-size: 0.8rem;"></i>
+                                    <span class="small text-muted">Exp:
+                                        <span class="fw-bold text-dark">
+                                            {% if med.expiry_date %}
+                                            {{ med.expiry_date|date:"M Y" }}
+                                            {% else %}
+                                            Not Set
+                                            {% endif %}
+                                        </span>
+                                    </span>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="fw-bold text-dark">₹{{ med.price|floatformat:2 }}</div>
+                                <div class="extra-small text-muted">Unit Cost</div>
+                            </td>
+                            <td>
+                                {% if med.prescription_required %}
+                                <span class="badge status-chip status-verified">Rx Required</span>
+                                {% else %}
+                                <span class="badge status-chip status-paid text-success">OTC Item</span>
+                                {% endif %}
+                            </td>
+                            <td class="text-end pe-4">
+                                <div class="d-flex align-items-center justify-content-end gap-3">
+                                    <div class="text-end me-2 border-end pe-3">
+                                        <div
+                                            class="fw-bold {% if med.stock < 20 %}text-danger{% else %}text-dark{% endif %}">
+                                            {{ med.stock }} Units</div>
+                                        <div class="extra-small text-muted">Current Stock</div>
+                                    </div>
+                                    <div class="d-flex gap-2">
+                                        <a href="{% url 'edit_medicine' med.id %}"
+                                            class="btn btn-soft-primary btn-sm rounded-pill px-3">
+                                            <i class="fas fa-edit me-1"></i> Edit
+                                        </a>
+                                        <a href="{% url 'delete_medicine' med.id %}"
+                                            class="btn btn-soft-danger btn-sm rounded-pill px-3"
+                                            onclick="return confirm('Archive this medicine record?')">
+                                            <i class="fas fa-trash-alt me-1"></i> Delete
+                                        </a>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5" class="text-center py-5">
+                                <div class="text-muted">
+                                    <i class="fas fa-inbox fa-3x mb-3 opacity-20"></i>
+                                    <p>No medicines found matching your criteria.</p>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<style>
+    :root {
+        --theme-primary: #00418c;
+        --theme-soft: rgba(0, 65, 140, 0.08);
+    }
+
+    .theme-text-primary { color: var(--theme-primary) !important; }
+    .theme-bg-primary { background-color: var(--theme-primary) !important; }
+    .theme-bg-soft { background-color: var(--theme-soft) !important; }
+    .theme-border-primary { border-color: var(--theme-primary) !important; }
+
+    .btn-theme-primary {
+        background-color: var(--theme-primary);
+        color: white;
+        border: none;
+        transition: all 0.3s ease;
+    }
+    .btn-theme-primary:hover {
+        background-color: #00336e;
+        color: white;
+        transform: translateY(-2px);
+    }
+
+    .btn-soft-primary {
+        background-color: var(--theme-soft);
+        color: var(--theme-primary);
+        border: none;
+    }
+
+    .btn-soft-primary:hover {
+        background-color: rgba(0, 65, 140, 0.15);
+        color: #00336e;
+    }
+
+    .btn-soft-danger {
+        background-color: #fee2e2;
+        color: #b91c1c;
+        border: none;
+    }
+
+    .btn-soft-danger:hover {
+        background-color: #fecaca;
+        color: #991b1b;
+    }
+
+    .extra-small {
+        font-size: 0.75rem;
+    }
+
+    .status-chip {
+        text-transform: none;
+        letter-spacing: normal;
+    }
+</style>
+
+{% endblock %}

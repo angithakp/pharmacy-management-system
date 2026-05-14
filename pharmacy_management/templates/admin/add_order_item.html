@@ -1,0 +1,354 @@
+{% extends 'admin/admin_base.html' %}
+{% block content %}
+<div class="container-fluid py-4 intake-terminal-v2">
+    <!-- ================= UNIFIED ASSET INTAKE HEADER ================= -->
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mb-4 gap-3">
+        <div class="d-flex align-items-center gap-3">
+            <div class="intake-icon-hexagon shadow-soft">
+                <i class="fas fa-capsules"></i>
+            </div>
+            <div>
+                <nav aria-label="breadcrumb" class="mb-1">
+                    <ol class="breadcrumb extra-small uppercase fw-bold mb-0">
+                        <li class="breadcrumb-item"><a href="{% url 'admin_orders' %}"
+                                class="text-decoration-none">Registry</a></li>
+                        <li class="breadcrumb-item"><a href="{% url 'admin_order_detail' order.id %}"
+                                class="text-decoration-none">Order {{ order.formatted_id }}</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Intake</li>
+                    </ol>
+                </nav>
+                <h2 class="fw-900 text-dark mb-0 tracing-tight">Medicine Formulation Panel</h2>
+            </div>
+        </div>
+        <div class="d-flex gap-2">
+            <a href="{% url 'admin_generate_bill' order.id %}"
+                class="btn btn-emerald rounded-4 px-4 py-2 fw-bold shadow-soft transition-all hover-grow">
+                Complete Formulation <i class="fas fa-arrow-right ms-2"></i>
+            </a>
+        </div>
+    </div>
+
+    <!-- MAIN INTERFACE: UNIFIED FLOW -->
+    <div class="row g-4 overflow-hidden">
+        <!-- FORM COLUMN -->
+        <div class="col-xl-4 col-lg-5">
+            <div class="card border-0 shadow-sm rounded-4 overflow-hidden sticky-lg-top"
+                style="top: 2rem; z-index: 10;">
+                <div class="card-header bg-dark text-white py-3 px-4 border-0">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <h6 class="fw-bold mb-0 uppercase tracking-widest fs-8 text-primary">New Entry Protocol</h6>
+                        <span class="badge bg-primary bg-opacity-20 text-primary extra-small fw-bold">Active
+                            Station</span>
+                    </div>
+                </div>
+                <div class="card-body p-4 p-md-5 bg-white">
+                    <form method="post" id="intake-form">
+                        {% csrf_token %}
+
+                        <div class="mb-4">
+                            <label class="uppercase fs-9 fw-900 text-muted mb-2 d-block">Asset Selection</label>
+                            <div class="modern-select-wrap">
+                                <select name="medicine_id" id="medicine-select" class="form-control" required>
+                                    <option value="">Querying pharma catalog...</option>
+                                    {% for med in medicines %}
+                                    <option value="{{ med.id }}" data-price="{{ med.price|floatformat:2 }}" data-stock="{{ med.stock }}">
+                                        {{ med.name }} [₹{{ med.price|floatformat:2 }}]
+                                    </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="mb-5">
+                            <label class="uppercase fs-9 fw-900 text-muted mb-2 d-block">Unit Allocation (Qty)</label>
+                            <input type="number" name="quantity"
+                                class="form-control form-control-lg border-2 border-light rounded-4 px-4 fw-bold text-dark fs-5"
+                                placeholder="00" min="1" required>
+                        </div>
+
+                        <button type="submit"
+                            class="btn btn-primary w-100 rounded-4 py-3 fw-900 text-white shadow-soft transition-all hover-grow border-0">
+                            <i class="fas fa-plus me-2"></i> Append to Formulation
+                        </button>
+                    </form>
+
+                    <div class="mt-4 pt-4 border-top">
+                        <div class="p-3 rounded-4 bg-light border d-flex gap-3 align-items-start">
+                            <i class="fas fa-info-circle text-primary mt-1"></i>
+                            <div class="extra-small text-muted flex-grow-1">
+                                <strong>System Logic:</strong> Adding items here updates the live formulation. Changes
+                                are saved to the primary order node immediately.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- MANIFEST COLUMN -->
+        <div class="col-xl-8 col-lg-7">
+            <div class="card border-0 shadow-sm rounded-4 h-100 bg-white">
+                <div
+                    class="card-header bg-white border-bottom py-3 px-4 d-flex justify-content-between align-items-center">
+                    <h6 class="fw-bold mb-0 uppercase tracking-widest fs-8 text-dark">Current Formulation Manifest</h6>
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="pulse-indicator-emerald"></span>
+                        <span class="extra-small text-muted fw-bold">Live Asset Feed</span>
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0 clinical-intake-table">
+                            <thead>
+                                <tr class="bg-light bg-opacity-30">
+                                    <th class="ps-4 py-3 text-muted uppercase fs-9 fw-900">Sequence</th>
+                                    <th class="py-3 text-muted uppercase fs-9 fw-900">Medicine Node</th>
+                                    <th class="py-3 text-muted uppercase fs-9 fw-900 text-center">Unit Price</th>
+                                    <th class="py-3 text-muted uppercase fs-9 fw-900 text-center">Qty</th>
+                                    <th class="pe-4 py-3 text-muted uppercase fs-9 fw-900 text-end">Line Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% if order_items %}
+                                {% for item in order_items %}
+                                <tr>
+                                    <td class="ps-4">
+                                        <div class="seq-badge">#{{ forloop.counter }}</div>
+                                    </td>
+                                    <td>
+                                        <div class="fw-bold text-dark fs-7 mb-0">{{ item.medicine_name }}</div>
+                                        <div class="extra-small opacity-50 uppercase fw-bold mt-1 text-primary">Node
+                                            Verified Agent</div>
+                                    </td>
+                                    <td class="text-center">
+                                        <span class="text-muted fs-8 me-1">₹</span>
+                                        <span class="fw-bold text-dark">{{ item.price|floatformat:2 }}</span>
+                                    </td>
+                                    <td class="text-center">
+                                        <span class="qty-pill-v2">{{ item.quantity }}</span>
+                                    </td>
+                                    <td class="pe-4 text-end">
+                                        <span class="text-muted fs-8 me-1">₹</span>
+                                        <span class="fw-900 text-primary fs-6">{{ item.subtotal|floatformat:2 }}</span>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                                {% else %}
+                                <tr>
+                                    <td colspan="5" class="py-5 text-center">
+                                        <div class="manifest-empty-state opacity-25">
+                                            <i class="fas fa-vial-circle-check fa-4x mb-3"></i>
+                                            <p class="fw-bold mb-0">Awaiting Formulation Entry</p>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endif %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                {% if order_items %}
+                <div class="card-footer bg-light bg-opacity-50 border-top mt-auto p-4 p-md-5">
+                    <div class="d-flex justify-content-between align-items-end">
+                        <div class="formulation-meta text-muted">
+                            <i class="fas fa-shield-check text-success me-2"></i>
+                            <span class="extra-small uppercase fw-bold">Consolidated Data Protected</span>
+                        </div>
+                        <div class="draft-calculation text-end">
+                            <div class="fs-9 uppercase fw-900 text-muted opacity-50 mb-1">Estimated Formulation Total
+                            </div>
+                            <div class="h3 fw-900 text-dark mb-0">
+                                <span class="fs-5 me-1 opacity-50">₹</span>Calculated on Save
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800;900&display=swap');
+
+    .intake-terminal-v2 {
+        background: #f4f7f9;
+        min-height: 100vh;
+        font-family: 'Outfit', sans-serif;
+    }
+
+    .fw-900 {
+        font-weight: 900;
+    }
+
+    .uppercase {
+        text-transform: uppercase;
+    }
+
+    .tracing-tight {
+        letter-spacing: -0.05em;
+    }
+
+    .tracking-widest {
+        letter-spacing: 0.15em;
+    }
+
+    .fs-7 {
+        font-size: 0.85rem;
+    }
+
+    .fs-8 {
+        font-size: 0.75rem;
+    }
+
+    .fs-9 {
+        font-size: 0.65rem;
+    }
+
+    .extra-small {
+        font-size: 0.65rem;
+    }
+
+    .shadow-soft {
+        box-shadow: 0 10px 30px -10px rgba(59, 130, 246, 0.3);
+    }
+
+    .intake-icon-hexagon {
+        width: 64px;
+        height: 64px;
+        background: white;
+        color: #3b82f6;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.75rem;
+        border-radius: 16px;
+        border: 1px solid rgba(59, 130, 246, 0.1);
+    }
+
+    .modern-select-wrap .select2-container--default .select2-selection--single {
+        height: 60px !important;
+        border-radius: 16px !important;
+        border: 2px solid #edf2f7 !important;
+        background: #fcfdfe !important;
+        display: flex !important;
+        align-items: center !important;
+        padding: 0 15px !important;
+        font-weight: 700 !important;
+        transition: all 0.2s;
+    }
+
+    .modern-select-wrap .select2-container--default.select2-container--focus .select2-selection--single {
+        border-color: #3b82f6 !important;
+        box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1) !important;
+    }
+
+    .modern-select-wrap .select2-selection__arrow {
+        height: 60px !important;
+        top: 0 !important;
+        right: 10px !important;
+    }
+
+    .clinical-intake-table thead th {
+        border: none !important;
+    }
+
+    .clinical-intake-table tbody tr {
+        border-bottom: 1px solid #f1f5f9;
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .clinical-intake-table tbody tr:hover {
+        background: #f8fafc;
+        transform: scale(1.005);
+    }
+
+    .seq-badge {
+        width: 32px;
+        height: 32px;
+        background: #eff6ff;
+        color: #3b82f6;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.65rem;
+        font-weight: 800;
+        border: 1px solid rgba(59, 130, 246, 0.1);
+    }
+
+    .qty-pill-v2 {
+        padding: 6px 16px;
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        font-weight: 800;
+        color: #1e293b;
+        display: inline-block;
+    }
+
+    .btn-emerald {
+        background: #10b981;
+        color: white;
+        border: none;
+    }
+
+    .pulse-indicator-emerald {
+        width: 10px;
+        height: 10px;
+        background: #10b981;
+        border-radius: 50%;
+        display: inline-block;
+        animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+        0% {
+            transform: scale(1);
+            opacity: 1;
+        }
+
+        100% {
+            transform: scale(2.5);
+            opacity: 0;
+        }
+    }
+
+    .hover-grow:hover {
+        transform: scale(1.03);
+        filter: brightness(1.1);
+    }
+
+    @media print {
+
+        .btn,
+        .breadcrumb,
+        .navbar,
+        .admin-sidebar {
+            display: none !important;
+        }
+
+        .intake-terminal-v2 {
+            background: white !important;
+        }
+
+        .card {
+            border: 1px solid #eee !important;
+            box-shadow: none !important;
+        }
+    }
+</style>
+
+<!-- 🔥 Select2 Activation -->
+<script>
+    $(document).ready(function () {
+        $('#medicine-select').select2({
+            placeholder: "Search pharma registry...",
+            allowClear: true,
+            width: '100%'
+        });
+    });
+</script>
+{% endblock %}

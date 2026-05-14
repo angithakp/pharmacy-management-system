@@ -1,0 +1,13 @@
+[2026-03-09 04:15:08.431997+00:00] To: ['diyakrishnatk@gmail.com'] | Error: [Errno 11001] getaddrinfo failed
+[2026-03-09 09:59:53.825817+00:00] To: ['angithavalsan@gmail.com'] | Error: [Errno 11001] getaddrinfo failed
+[2026-03-09 10:00:17.780640+00:00] To: ['angithavalsan@gmail.com'] | Error: [Errno 11001] getaddrinfo failed
+[2026-03-09 16:33:54.891361+00:00] To: ['angithavalsan@gmail.com'] | Error: [Errno 11001] getaddrinfo failed
+[2026-03-09 16:34:53.962231+00:00] To: ['angithavalsan@gmail.com'] | Error: [Errno 11001] getaddrinfo failed
+[2026-03-12 15:21:52.699268+00:00] To: ['angithavalsan421@gmail.com'] | Error: Connection unexpectedly closed: [WinError 10060] A connection attempt failed because the connected party did not properly respond after a period of time, or established connection failed because connected host has failed to respond
+[2026-03-12 15:51:22.363764+00:00] To: ['angithavalsan421@gmail.com'] | Error: Connection unexpectedly closed: [WinError 10060] A connection attempt failed because the connected party did not properly respond after a period of time, or established connection failed because connected host has failed to respond
+[2026-03-12 15:56:15.424597+00:00] To: ['angithavalsan421@gmail.com'] | Error: [Errno 11001] getaddrinfo failed
+[2026-03-12 15:56:30.349560+00:00] To: ['angithavalsan421@gmail.com'] | Error: [Errno 11001] getaddrinfo failed
+[2026-03-12 15:57:02.067353+00:00] To: ['angithavalsan421@gmail.com'] | Error: [Errno 11001] getaddrinfo failed
+[2026-03-13 04:35:41.287019+00:00] To: ['diyakrishnatk@gmail.com'] | Error: [Errno 11001] getaddrinfo failed
+[2026-03-13 04:38:35.611826+00:00] To: ['diyakrishnatk@gmail.com'] | Error: [Errno 11001] getaddrinfo failed
+[2026-03-13 04:41:06.525699+00:00] To: ['angithavalsan@gmail.com'] | Error: [Errno 11001] getaddrinfo failed

@@ -1,0 +1,209 @@
+{% extends 'admin/admin_base.html' %}
+{% block content %}
+<div class="container-fluid py-5 settlement-celebration-v2">
+    <div class="row justify-content-center align-items-center min-vh-75">
+        <div class="col-xl-5 col-lg-7 col-md-9 text-center">
+
+            <!-- ================= DYNAMIC SUCCESS CARD ================= -->
+            <div class="card border-0 shadow-lg rounded-4 overflow-hidden celebration-card position-relative">
+                <div class="celebration-particles"></div>
+
+                <div class="card-body p-5 position-relative z-1">
+                    <!-- SUCCESS ICON HEXAGON -->
+                    <div class="success-hexagon bg-success shadow-soft mb-4 mx-auto">
+                        <i class="fas fa-check"></i>
+                    </div>
+
+                    <h2 class="fw-900 text-dark mb-1 tracing-tight">Billing <span class="text-success">Successful</span>
+                    </h2>
+                    <p class="text-muted extra-small uppercase fw-bold tracking-widest mb-4">Order ID: {{ order.formatted_id }}
+                    </p>
+
+                    <div class="p-4 bg-light rounded-4 border-2 border-dashed border-primary border-opacity-10 mb-4">
+                        <div class="extra-small text-muted uppercase fw-900 mb-1 opacity-50">Authorized Billing Amount
+                        </div>
+                        <div class="display-5 fw-900 text-primary mb-0 letter-spacing-tight">
+                            <span class="fs-4 fw-800 me-1">Rs.</span>{{ order.total_amount|floatformat:2 }}
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-center gap-2 mb-5">
+                        <span class="badge bg-success bg-opacity-10 text-success rounded-pill px-3 py-2 fw-bold fs-9">
+                            <i class="fas fa-shield-check me-1"></i> Finalized
+                        </span>
+                        {% if order.user %}
+                        <span class="badge bg-primary bg-opacity-10 text-primary rounded-pill px-3 py-2 fw-bold fs-9">
+                            <i class="fas fa-envelope me-1"></i> Patient Notified
+                        </span>
+                        {% else %}
+                        <span class="badge bg-info bg-opacity-10 text-info rounded-pill px-3 py-2 fw-bold fs-9">
+                            <i class="fas fa-walking me-1"></i> Counter Sale
+                        </span>
+                        {% endif %}
+                    </div>
+
+                    <!-- ACTION BUTTONS -->
+                    <div class="d-grid gap-3">
+                        <a href="{% url 'admin_billing' order.id %}"
+                            class="btn btn-dark rounded-4 py-3 fw-900 shadow-sm transition-all hover-grow">
+                            <i class="fas fa-print me-2"></i> Print Medical Bill
+                        </a>
+                        <div class="row g-3">
+                            <div class="col-6">
+                                <a href="{% url 'admin_order_update' order.id %}"
+                                    class="btn btn-outline-success w-100 rounded-4 py-3 fw-bold fs-8 transition-all hover-success-bg">
+                                    Update State
+                                </a>
+                            </div>
+                            <div class="col-6">
+                                <a href="{% url 'admin_orders' %}"
+                                    class="btn btn-outline-primary w-100 rounded-4 py-3 fw-bold fs-8 transition-all hover-primary-bg">
+                                    Order Home
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SECURITY FOOTER -->
+            <div
+                class="mt-4 p-3 bg-blue-soft text-primary rounded-4 d-flex align-items-center justify-content-center gap-3 border border-primary border-opacity-10">
+                <i class="fas fa-lock fs-7"></i>
+                <span class="extra-small uppercase fw-900 tracking-widest">Encrypted Billing Session: AUTH-PH-{{
+                    order.formatted_id }}</span>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800;900&display=swap');
+
+    .settlement-celebration-v2 {
+        background: #f8fafc;
+        min-height: 100vh;
+        font-family: 'Outfit', sans-serif;
+    }
+
+    .min-vh-75 {
+        min-height: 75vh;
+    }
+
+    .fw-900 {
+        font-weight: 900;
+    }
+
+    .uppercase {
+        text-transform: uppercase;
+    }
+
+    .tracing-tight {
+        letter-spacing: -0.05em;
+    }
+
+    .tracking-widest {
+        letter-spacing: 0.15em;
+    }
+
+    .letter-spacing-tight {
+        letter-spacing: -0.04em;
+    }
+
+    .fs-8 {
+        font-size: 0.75rem;
+    }
+
+    .fs-9 {
+        font-size: 0.65rem;
+    }
+
+    .extra-small {
+        font-size: 0.65rem;
+    }
+
+    .celebration-card {
+        border: 1px solid #e2e8f0 !important;
+        background: white;
+    }
+
+    .celebration-particles {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-image: radial-gradient(circle, #3b82f6 1px, transparent 1px);
+        background-size: 30px 30px;
+        opacity: 0.03;
+        pointer-events: none;
+    }
+
+    .success-hexagon {
+        width: 80px;
+        height: 80px;
+        clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 32px;
+        color: white;
+        animation: hexagon-pop 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
+    }
+
+    @keyframes hexagon-pop {
+        0% {
+            transform: scale(0) rotate(-180deg);
+        }
+
+        100% {
+            transform: scale(1) rotate(0);
+        }
+    }
+
+    .shadow-soft {
+        box-shadow: 0 10px 25px -5px rgba(16, 185, 129, 0.4);
+    }
+
+    .bg-blue-soft {
+        background: #eff6ff;
+    }
+
+    .hover-grow:hover {
+        transform: scale(1.02);
+        filter: brightness(1.1);
+        box-shadow: 0 15px 30px -10px rgba(0, 0, 0, 0.2) !important;
+    }
+
+    .hover-success-bg:hover {
+        background: #10b981;
+        color: white !important;
+    }
+
+    .hover-primary-bg:hover {
+        background: #3b82f6;
+        color: white !important;
+    }
+
+    .z-1 {
+        z-index: 1;
+    }
+
+    @media print {
+
+        .btn,
+        .breadcrumb,
+        .navbar,
+        .admin-sidebar,
+        .card-footer {
+            display: none !important;
+        }
+
+        .card {
+            box-shadow: none !important;
+            border: 1px solid #ccc !important;
+        }
+    }
+</style>
+{% endblock %}

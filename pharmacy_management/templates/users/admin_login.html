@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administrator Console | PMBJK Portal</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Albert+Sans:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --midnight: #020b1a;
+            --primary-blue: #004a99;
+            --accent-glow: #3b82f6;
+            --slate-gray: #475569;
+            --royal-shadow: 0 40px 80px -15px rgba(0, 0, 0, 0.6);
+        }
+
+        body {
+            font-family: 'Albert Sans', sans-serif;
+            background-color: var(--midnight);
+            background-image: 
+                radial-gradient(at 0% 0%, hsla(215, 80%, 15%, 1) 0, transparent 50%),
+                radial-gradient(at 100% 100%, hsla(220, 60%, 10%, 1) 0, transparent 50%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* --- BACKGROUND BLOBS --- */
+        .blob {
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            background: rgba(0, 74, 153, 0.1);
+            filter: blur(120px);
+            border-radius: 50%;
+            z-index: 0;
+            animation: drift 25s infinite alternate ease-in-out;
+        }
+
+        @keyframes drift {
+            0% { transform: translate(-10%, -10%); }
+            100% { transform: translate(30%, 20%); }
+        }
+
+        /* --- LOGIN CARD --- */
+        .console-container {
+            z-index: 10;
+            width: 100%;
+            max-width: 440px;
+            padding: 20px;
+        }
+
+        .console-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(30px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 40px;
+            padding: 4.5rem 3rem;
+            box-shadow: var(--royal-shadow);
+            text-align: center;
+            animation: fadeInScale 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        @keyframes fadeInScale {
+            from { opacity: 0; transform: scale(0.96); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .card-accent-line {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 5px;
+            background: var(--primary-blue);
+            border-radius: 0 0 10px 10px;
+            box-shadow: 0 0 15px var(--accent-glow);
+        }
+
+        /* --- BRANDING --- */
+        .brand-section {
+            margin-bottom: 3.5rem;
+        }
+
+        .brand-icon {
+            width: 84px;
+            height: 84px;
+            background: white;
+            border-radius: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            padding: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .brand-icon img {
+            width: 100%;
+            height: auto;
+        }
+
+        .console-card h2 {
+            color: white;
+            font-weight: 800;
+            font-size: 1.8rem;
+            letter-spacing: -1px;
+            margin-bottom: 0.25rem;
+        }
+
+        .console-card p {
+            color: var(--slate-gray);
+            font-size: 0.85rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        /* --- FORM ELEMENTS --- */
+        .input-group-modern {
+            margin-bottom: 1.5rem;
+            text-align: left;
+        }
+
+        .field-label {
+            font-size: 0.7rem;
+            font-weight: 800;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+            display: block;
+            padding-left: 5px;
+        }
+
+        .modern-input {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 18px;
+            padding: 16px 20px 16px 54px;
+            color: white;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .modern-input:focus {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: var(--accent-glow);
+            outline: none;
+            box-shadow: 0 0 0 1px var(--accent-glow);
+        }
+
+        .input-icon-box {
+            position: absolute;
+            left: 20px;
+            top: 41px;
+            color: var(--slate-gray);
+            transition: color 0.3s ease;
+        }
+
+        .modern-input:focus ~ .input-icon-box {
+            color: white;
+        }
+
+        /* --- SUCCESS BUTTON --- */
+        .btn-launch {
+            background: var(--primary-blue);
+            color: white;
+            border: none;
+            border-radius: 18px;
+            padding: 16px;
+            width: 100%;
+            font-weight: 800;
+            font-size: 0.95rem;
+            letter-spacing: 0.5px;
+            margin-top: 1.5rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 25px rgba(0, 74, 153, 0.4);
+        }
+
+        .btn-launch:hover {
+            background: #0056b3;
+            transform: translateY(-2px);
+            box-shadow: 0 15px 35px rgba(0, 74, 153, 0.6);
+        }
+
+        /* --- ERROR ALERTS --- */
+        .error-toast {
+            background: rgba(185, 28, 28, 0.15);
+            border: 1px solid rgba(185, 28, 28, 0.3);
+            color: #fca5a5;
+            padding: 12px 18px;
+            border-radius: 15px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            animation: shake 0.5s ease;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        /* --- FOOTER --- */
+        .console-footer {
+            margin-top: 3rem;
+        }
+
+        .exit-link {
+            color: var(--slate-gray);
+            text-decoration: none;
+            font-size: 0.75rem;
+            font-weight: 700;
+            transition: color 0.3s ease;
+        }
+
+        .exit-link:hover {
+            color: white;
+        }
+
+        /* Particles */
+        .particle {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            opacity: 0.1;
+            pointer-events: none;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="blob"></div>
+    <div class="blob" style="right: -10%; bottom: -10%; animation-delay: -10s; background: rgba(59, 130, 246, 0.08);"></div>
+
+    <div class="console-container">
+        <div class="console-card">
+            <div class="card-accent-line"></div>
+            
+            <div class="brand-section">
+                <div class="brand-icon">
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTJuQKniJmO5eQ79LsLtMCdZF11xZhx2C0SFQ&s" alt="Jan Aushadhi Logo">
+                </div>
+                <h2>Administrator Access</h2>
+                <p>Pharmacy Management Console</p>
+            </div>
+
+            {% if messages %}
+            {% for message in messages %}
+            <div class="error-toast">
+                <i class="fas fa-lock text-danger"></i>
+                <div>{{ message }}</div>
+            </div>
+            {% endfor %}
+            {% endif %}
+
+            <form method="POST">
+                {% csrf_token %}
+                <div class="input-group-modern position-relative">
+                    <label class="field-label">Official Username</label>
+                    <input type="text" name="username" class="modern-input" placeholder="Enter identifier" required autocomplete="off">
+                    <div class="input-icon-box">
+                        <i class="fas fa-user-shield"></i>
+                    </div>
+                </div>
+
+                <div class="input-group-modern position-relative">
+                    <label class="field-label">Private Passphrase</label>
+                    <input type="password" name="password" class="modern-input" placeholder="••••••••" required>
+                    <div class="input-icon-box">
+                        <i class="fas fa-key"></i>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-launch">
+                    LAUNCH ADMIN SESSION
+                </button>
+            </form>
+
+            <div class="console-footer">
+                <a href="{% url 'home' %}" class="exit-link">
+                    <i class="fas fa-power-off me-2"></i> ABORT LOGIN & RETURN
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Small decorative particles -->
+    <script>
+        for (let i = 0; i < 20; i++) {
+            let particle = document.createElement('div');
+            particle.className = 'particle';
+            let size = Math.random() * 3 + 1;
+            particle.style.width = size + 'px';
+            particle.style.height = size + 'px';
+            particle.style.left = Math.random() * 100 + 'vw';
+            particle.style.top = Math.random() * 100 + 'vh';
+            document.body.appendChild(particle);
+        }
+    </script>
+
+</body>
+</html>

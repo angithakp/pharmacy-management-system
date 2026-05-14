@@ -1,0 +1,52 @@
+{% extends 'emails/base_email.html' %}
+{% block email_content %}
+
+<div style="margin-bottom: 40px; text-align: left;">
+    <span class="status-pill" style="background-color: #f0fdf4; color: #10b981;">READY FOR PICKUP</span>
+    <h2 style="margin: 0; font-size: 28px; font-weight: 800; color: #0f172a; letter-spacing: -0.02em;">Ready for
+        Collection</h2>
+    <p style="margin: 6px 0 0 0; font-size: 15px; color: #64748b;">Manifest {{ order.formatted_id }} Fulfillment Complete</p>
+</div>
+
+<p style="margin-top: 0; font-size: 17px; color: #1e293b; font-weight: 700;">Hello {{ patient_name|default:"Patient" }},
+</p>
+<p style="line-height: 1.7; color: #475569; font-size: 15px;">
+    Good news! Your order has been clinicaly packed and is now ready for collection at <strong>Janaushadhi Kendra
+        Kunhipally</strong>. Please visit our store during operating hours.
+</p>
+
+<div class="highlight-card" style="background-color: #f8fafc; border: 1px solid #e2e8f0; padding: 35px;">
+    <div
+        style="color: #64748b; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 25px; border-bottom: 1px solid #cbd5e1; padding-bottom: 15px;">
+        Pickup Information
+    </div>
+    <table style="width: 100%; border-collapse: collapse; font-size: 15px;">
+        <tr>
+            <td style="padding: 15px 0; color: #64748b; border-bottom: 1px solid #f1f5f9;">Location</td>
+            <td
+                style="padding: 15px 0; color: #1e293b; font-weight: 700; text-align: right; border-bottom: 1px solid #f1f5f9;">
+                Royal Tower, Kunhipally</td>
+        </tr>
+        <tr>
+            <td style="padding: 15px 0; color: #64748b; border-bottom: 1px solid #f1f5f9;">Operating Hours</td>
+            <td
+                style="padding: 15px 0; color: #1e293b; font-weight: 700; text-align: right; border-bottom: 1px solid #f1f5f9;">
+                08:30 AM - 09:30 PM</td>
+        </tr>
+        <tr>
+            <td style="padding: 15px 0; color: #64748b;">Reference ID</td>
+            <td style="padding: 15px 0; color: #1a4a8d; font-weight: 800; text-align: right;">{{ order.formatted_id }}</td>
+        </tr>
+    </table>
+</div>
+
+<div style="text-align: center; margin-top: 45px;">
+    <a href="https://www.google.com/maps?q=Janaushadhi+Kendra+Kunhipally" class="btn"
+        style="background-color: #10b981;">Get Store Directions</a>
+    <p style="margin: 20px 0 0 0; font-size: 13px; color: #94a3b8; line-height: 1.5;">
+        Please bring your digital receipt or quote Manifest ID {{ order.formatted_id }}
+        at the counter for faster service.
+    </p>
+</div>
+
+{% endblock %}

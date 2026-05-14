@@ -1,0 +1,182 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<section class="py-5 bg-light" style="min-height: 85vh;">
+    <div class="container animate-up">
+
+        <!-- ================= PAGE HEADER ================= -->
+        <div class="row mb-5 align-items-center">
+            <div class="col-lg-7">
+                <h6 class="text-theme-primary fw-bold text-uppercase ls-1">Pharmacy Inventory</h6>
+                <h1 class="display-5 fw-black text-dark mb-2">Medicine Catalog</h1>
+                <p class="text-muted lead mb-0">Browse generic medicines approved by PMBI for quality and efficacy.</p>
+            </div>
+            <div class="col-lg-5 text-lg-end mt-4 mt-lg-0">
+                <a href="{% url 'upload_prescription' %}" class="btn btn-upload-prescription rounded-pill px-4 py-3 shadow">
+                    <i class="fas fa-file-prescription me-2"></i> Upload Prescription
+                </a>
+            </div>
+        </div>
+
+        <!-- ================= SEARCH & FILTERS ================= -->
+        <div class="card border-0 shadow-sm p-3 mb-5 rounded-4 bg-white">
+            <div class="row g-4 align-items-center">
+                <div class="col-lg-6">
+                    <form method="GET" class="d-flex gap-2">
+                        <div class="input-group bg-light rounded-pill border-0 overflow-hidden">
+                            <span class="input-group-text bg-transparent border-0 text-muted ps-4">
+                                <i class="fas fa-search"></i>
+                            </span>
+                            <input type="text" name="q" value="{{ request.GET.q }}"
+                                class="form-control border-0 bg-transparent shadow-none ps-0"
+                                placeholder="Search by name or category (e.g. Cough Syrup)...">
+                            <button type="submit" class="btn btn-theme-primary px-4 rounded-pill m-1">Search</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="col-lg-6">
+                    <div class="d-flex justify-content-lg-end flex-wrap gap-2">
+                        <a href="?category=All{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}"
+                            class="btn btn-sm {% if not request.GET.category or request.GET.category == 'All' %}btn-theme-primary{% else %}btn-outline-light text-muted{% endif %} rounded-pill px-3">
+                            All Items
+                        </a>
+                        {% for cat in categories %}
+                        <a href="?category={{ cat }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}"
+                            class="btn btn-sm {% if request.GET.category == cat %}btn-theme-primary{% else %}btn-outline-light text-muted{% endif %} rounded-pill px-3">
+                            {{ cat }}
+                        </a>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= MEDICINE GRID ================= -->
+        <div class="row g-4">
+
+            {% for med in medicines %}
+            <div class="col-lg-4 col-md-6 animate-up delay-{{ forloop.counter|add:0|slugify }}">
+                <div class="card h-100 border-0 shadow-sm medicine-card">
+                    <!-- Top accent line -->
+                    <div class="bg-theme-primary" style="height: 4px;"></div>
+                    
+                    <div class="card-body p-4 flex-column d-flex">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <div class="badge bg-theme-soft text-theme-primary border-0 rounded-pill px-3 py-2 extra-small fw-bold text-uppercase">
+                                {{ med.category }}
+                            </div>
+                            {% if med.stock > 0 %}
+                            <span class="badge bg-success-light text-success rounded-pill px-3 py-2 extra-small fw-bold border-0">
+                                <i class="fas fa-check-circle me-1"></i> In Stock
+                            </span>
+                            {% else %}
+                            <span class="badge bg-danger-light text-danger rounded-pill px-3 py-2 extra-small fw-bold border-0">
+                                <i class="fas fa-circle-info me-1"></i> Out of Stock
+                            </span>
+                            {% endif %}
+                        </div>
+
+                        <h4 class="fw-bold text-dark mb-1">{{ med.name }}</h4>
+                        <div class="h3 fw-900 text-theme-primary mb-4">₹{{ med.price|floatformat:2 }}</div>
+
+                        <div class="mt-auto pt-4 border-top">
+                            <ul class="list-unstyled mb-4">
+                                <li class="d-flex align-items-center small mb-2 text-muted">
+                                    {% if med.prescription_required %}
+                                        <i class="fas fa-file-medical text-warning me-2"></i> <span>Prescription <span class="fw-bold text-warning">Required</span></span>
+                                    {% else %}
+                                        <i class="fas fa-check-circle text-success me-2"></i> <span>No Prescription Needed</span>
+                                    {% endif %}
+                                </li>
+                                <li class="d-flex align-items-center small text-muted">
+                                    {% if med.store_pickup_only %}
+                                        <i class="fas fa-store text-info me-2"></i> <span>Store Pickup Only</span>
+                                    {% else %}
+                                        <i class="fas fa-truck text-success me-2"></i> <span class="text-success">Home Delivery Available</span>
+                                    {% endif %}
+                                </li>
+                            </ul>
+
+                            {% if med.stock > 0 %}
+                            <a href="{% url 'upload_prescription' %}?medicine_id={{ med.id }}"
+                                class="btn btn-theme-primary w-100 rounded-pill py-2 shadow-sm">
+                                <i class="fas fa-shopping-basket me-2"></i> Select & Order
+                            </a>
+                            {% else %}
+                            <button class="btn btn-outline-light w-100 rounded-pill py-2 text-muted fw-bold border" disabled>
+                                Currently Unavailable
+                            </button>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12 py-5 text-center">
+                <div class="text-muted mb-4 opacity-25">
+                    <i class="fas fa-capsules fa-6x"></i>
+                </div>
+                <h3 class="fw-bold text-dark">No Medicines Found</h3>
+                <p class="text-muted mx-auto" style="max-width: 400px;">We couldn't find any products matching your search criteria. Try different keywords or browse categories.</p>
+                <a href="{% url 'medicines' %}" class="btn btn-link text-theme-primary fw-bold mt-2">Clear All Search Filters</a>
+            </div>
+            {% endfor %}
+
+        </div>
+
+    </div>
+</section>
+
+<style>
+    :root {
+        --theme-primary: #00418c;
+        --theme-soft: rgba(0, 65, 140, 0.05);
+    }
+
+    .ls-1 { letter-spacing: 0.1rem; }
+    .fw-900 { font-weight: 900; }
+    .bg-theme-soft { background-color: var(--theme-soft); }
+    .bg-success-light { background-color: #f0fdf4; }
+    .bg-danger-light { background-color: #fee2e2; }
+    .text-theme-primary { color: var(--theme-primary) !important; }
+    .bg-theme-primary { background-color: var(--theme-primary) !important; }
+
+    .btn-upload-prescription {
+        background: linear-gradient(135deg, #00418c 0%, #0066cc 100%);
+        color: white;
+        border: none;
+        transition: all 0.3s ease;
+        font-weight: 700;
+    }
+    .btn-upload-prescription:hover {
+        background: linear-gradient(135deg, #00336e 0%, #00418c 100%);
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(0, 65, 140, 0.25) !important;
+    }
+
+    .btn-theme-primary {
+        background-color: var(--theme-primary);
+        color: white;
+        border: none;
+        transition: all 0.3s ease;
+    }
+    .btn-theme-primary:hover {
+        background-color: #00336e;
+        color: white;
+        transform: translateY(-2px);
+    }
+
+    .medicine-card {
+        border-radius: 1.5rem !important;
+        transition: all 0.3s ease;
+        border: 1px solid #eee !important;
+    }
+    .medicine-card:hover {
+        border-color: var(--theme-primary) !important;
+        transform: translateY(-8px);
+        box-shadow: 0 15px 35px rgba(0, 65, 140, 0.08) !important;
+    }
+</style>
+
+{% endblock %}

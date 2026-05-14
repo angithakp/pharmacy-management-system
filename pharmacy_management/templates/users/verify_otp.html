@@ -1,0 +1,293 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verify Identity | Jan Aushadhi Portal</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --brand-primary: #0f172a;
+            --brand-accent: #2563eb;
+            --brand-soft: #f8fafc;
+            --text-slate: #475569;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: white;
+            margin: 0;
+            overflow-x: hidden;
+            height: 100vh;
+        }
+
+        .split-container {
+            height: 100vh;
+            display: flex;
+        }
+
+        /* --- VISUAL BRAND SIDE --- */
+        .visual-side {
+            flex: 1;
+            background: var(--brand-primary);
+            position: relative;
+            overflow: hidden;
+            display: none;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 60px;
+            color: white;
+        }
+
+        @media (min-width: 992px) {
+            .visual-side { display: flex; }
+        }
+
+        .visual-bg-image {
+            position: absolute;
+            inset: 0;
+            background: url("{% static 'img/auth/otp_secure.png' %}") no-repeat center center;
+            background-size: cover;
+            opacity: 0.4;
+            filter: contrast(1.2) brightness(0.8);
+        }
+
+        .visual-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, rgba(15, 23, 42, 0) 0%, rgba(15, 23, 42, 0.9) 100%);
+        }
+
+        .brand-logo {
+            position: relative;
+            z-index: 2;
+            font-size: 1.5rem;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .brand-icon-box {
+            width: 40px;
+            height: 40px;
+            background: var(--brand-accent);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 16px rgba(37, 99, 235, 0.3);
+        }
+
+        .visual-footer {
+            position: relative;
+            z-index: 2;
+        }
+
+        /* --- FORM SIDE --- */
+        .form-side {
+            flex: 1.2;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+        }
+
+        .form-wrapper {
+            width: 100%;
+            max-width: 440px;
+            animation: slideIn 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .header-section { margin-bottom: 40px; }
+        .header-section h2 { 
+            font-weight: 800; 
+            color: var(--brand-primary); 
+            font-size: 2.2rem;
+            letter-spacing: -1.5px;
+            margin-bottom: 8px;
+        }
+        .header-section p { color: var(--text-slate); font-weight: 500; }
+
+        /* OTP INPUTS */
+        .otp-display-group {
+            margin-bottom: 30px;
+        }
+
+        .modern-otp-input {
+            width: 100%;
+            padding: 20px;
+            background: var(--brand-soft);
+            border: 2px solid transparent;
+            border-radius: 16px;
+            font-size: 2.5rem;
+            font-weight: 800;
+            text-align: center;
+            letter-spacing: 0.8rem;
+            color: var(--brand-primary);
+            transition: all 0.3s ease;
+        }
+
+        .modern-otp-input:focus {
+            background: white;
+            border-color: var(--brand-accent);
+            box-shadow: 0 10px 20px rgba(37, 99, 235, 0.08);
+            outline: none;
+        }
+
+        .modern-otp-input::placeholder {
+            color: #cbd5e1;
+        }
+
+        .btn-brand-primary {
+            background: var(--brand-primary);
+            color: white;
+            border: none;
+            border-radius: 16px;
+            padding: 18px;
+            width: 100%;
+            font-weight: 800;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 25px rgba(15, 23, 42, 0.15);
+            margin-top: 10px;
+        }
+
+        .btn-brand-primary:hover {
+            background: #1e293b;
+            transform: translateY(-2px);
+            box-shadow: 0 15px 35px rgba(15, 23, 42, 0.25);
+        }
+
+        /* ALERTS */
+        .alert-toast {
+            background: #e0f2fe;
+            color: #0369a1;
+            padding: 18px;
+            border-radius: 16px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            border: none;
+        }
+
+        .resend-box {
+            margin-top: 40px;
+            text-align: center;
+            border-top: 1px solid #f1f5f9;
+            padding-top: 25px;
+        }
+
+        .brand-link {
+            color: var(--brand-accent);
+            text-decoration: none;
+            font-weight: 800;
+        }
+
+        .brand-link:hover { text-decoration: underline; }
+
+        /* MOBILE FIX */
+        @media (max-width: 576px) {
+            .form-side { padding: 30px 20px; }
+            .header-section h2 { font-size: 1.8rem; }
+            .modern-otp-input { font-size: 2rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="split-container">
+        <!-- LEFT: VISUAL SIDE -->
+        <div class="visual-side">
+            <div class="visual-bg-image"></div>
+            <div class="visual-overlay"></div>
+            
+            <div class="brand-logo">
+                <div class="brand-icon-box">
+                    <i class="fas fa-shield-halved text-white"></i>
+                </div>
+                <span>Jan Aushadhi Port</span>
+            </div>
+
+            <div class="visual-footer">
+                <h1 class="display-5 fw-bold mb-4">Securing your <br> healthcare profile.</h1>
+                <p class="lead opacity-75">We just sent a unique verification code to your email. Please use it to finalize your session and access the portal.</p>
+                
+                <div class="mt-5 d-flex gap-4">
+                    <div class="d-flex align-items-center gap-2">
+                        <i class="fas fa-circle-check text-info"></i>
+                        <span class="small fw-bold">2-Factor Auth</span>
+                    </div>
+                    <div class="d-flex align-items-center gap-2">
+                        <i class="fas fa-circle-check text-info"></i>
+                        <span class="small fw-bold">AES-256 Encryption</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- RIGHT: FORM SIDE -->
+        <div class="form-side">
+            <div class="form-wrapper">
+                
+                <div class="header-section text-center text-lg-start">
+                    <h2>Verify Activation</h2>
+                    <p>Enter the 6-digit code sent to <br> <strong class="text-primary">{{ email }}</strong></p>
+                </div>
+
+                {% if messages %}
+                    {% for message in messages %}
+                    <div class="alert-toast">
+                        <i class="fas fa-info-circle fs-5"></i>
+                        <div>{{ message }}</div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="alert-toast">
+                        <i class="fas fa-paper-plane fs-5"></i>
+                        <div>A verification code is now active for <strong>{{ email }}</strong>. Please check your inbox (and spam folder).</div>
+                    </div>
+                {% endif %}
+
+                <form method="POST">
+                    {% csrf_token %}
+                    
+                    <div class="otp-display-group">
+                        <label class="small fw-800 text-muted ms-1 mb-2 d-block text-center text-lg-start">VERIFICATION CODE</label>
+                        <input type="text" name="otp" class="modern-otp-input" maxlength="6" placeholder="000000" required autofocus>
+                    </div>
+
+                    <button type="submit" class="btn-brand-primary">
+                        Verify & Activate Account <i class="fas fa-arrow-right ms-2 mt-1"></i>
+                    </button>
+                </form>
+
+                <div class="resend-box">
+                    <p class="text-muted small fw-bold mb-0">
+                        Didn't receive the protocol? <a href="#" class="brand-link">Resend Code</a>
+                    </p>
+                </div>
+
+                <div class="mt-5 text-center opacity-25 d-lg-none">
+                    <p class="extra-small fw-bold text-dark text-uppercase">Jan Aushadhi Kunhipally</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
+
+
