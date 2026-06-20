@@ -1,4 +1,5 @@
 from pathlib import Path
+import os
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -115,12 +116,15 @@ LOGOUT_REDIRECT_URL = '/'
 FAST2SMS_API_KEY = "YOUR_FAST2SMS_API_KEY"
 
 
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = "your_email@gmail.com"
-EMAIL_HOST_PASSWORD = "YOUR_EMAIL_PASSWORD"
+
+EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
+
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 RAZORPAY_KEY_ID = "YOUR_RAZORPAY_KEY_ID"
