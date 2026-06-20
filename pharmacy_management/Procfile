@@ -1,0 +1,1 @@
+web: gunicorn pharmacy_management.wsgipython manage.py collectstatic
