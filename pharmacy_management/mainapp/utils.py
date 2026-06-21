@@ -12,8 +12,9 @@ from io import BytesIO
 from .models import OrderItem
 import requests
 import os
+from django.template.loader import render_to_string
 
-
+# ADD THIS FIRST
 def send_brevo_email(subject, html_content, recipient_email):
     url = "https://api.brevo.com/v3/smtp/email"
 
@@ -25,7 +26,7 @@ def send_brevo_email(subject, html_content, recipient_email):
 
     payload = {
         "sender": {
-            "name": "Janaushadhi Pharmacy",
+            "name": "Pradhan Mantri Bharatiya Janaushadhi Kendra",
             "email": "angithavalsan@gmail.com"
         },
         "to": [
@@ -42,8 +43,8 @@ def send_brevo_email(subject, html_content, recipient_email):
         timeout=20
     )
 
-    print(response.status_code)
-    print(response.text)
+    print("BREVO STATUS:", response.status_code)
+    print("BREVO RESPONSE:", response.text)
 
     return response.status_code in [200, 201]
 
@@ -129,16 +130,17 @@ def send_professional_email(subject, template_name, context, recipient_list):
 
         print("STEP 5")
         print("SENDING EMAIL TO:", recipient_list)
-        print("HOST =", settings.EMAIL_HOST)
-        print("PORT =", settings.EMAIL_PORT)
-        print("TLS =", settings.EMAIL_USE_TLS)
-        print("USER =", settings.EMAIL_HOST_USER)
-        email.send(fail_silently=False)
-        
-        print("EMAIL SENT SUCCESSFULLY")
 
-        print("STEP 6")
-        return True
+        html_content = render_to_string(
+            f'emails/{template_name}.html',
+            context
+        )
+
+        return send_brevo_email(
+        subject=subject,
+        html_content=html_content,
+        recipient_email=recipient_list[0]
+        )
 
     except Exception as e:
         print("EMAIL ERROR:", e)
