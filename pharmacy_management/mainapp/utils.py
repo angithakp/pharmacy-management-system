@@ -92,7 +92,10 @@ def send_professional_email(subject, template_name, context, recipient_list):
         print("EMAIL PORT:", settings.EMAIL_PORT)
 
         print("STEP 5")
+        print("SENDING EMAIL TO:", recipient_list)
         email.send(fail_silently=False)
+        
+        print("EMAIL SENT SUCCESSFULLY")
 
         print("STEP 6")
         return True
