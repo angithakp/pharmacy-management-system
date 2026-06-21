@@ -11,6 +11,8 @@ import base64
 from io import BytesIO
 from .models import OrderItem
 import requests
+import os
+
 
 def send_brevo_email(subject, html_content, recipient_email):
     url = "https://api.brevo.com/v3/smtp/email"
