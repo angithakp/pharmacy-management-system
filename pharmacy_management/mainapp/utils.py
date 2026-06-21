@@ -42,11 +42,7 @@ def send_sms_console(mobile, message):
 from email.mime.image import MIMEImage
 
 def send_professional_email(subject, template_name, context, recipient_list):
-    """
-    Utility function to send professional HTML emails.
-    Embeds QR code as CID if present in context.
-    """
-    # Base Context
+
     context.update({
         'subject': subject,
         'pharmacy_name': 'Pradhan Mantri Bharatiya Janaushadhi Kendra',
@@ -57,40 +53,54 @@ def send_professional_email(subject, template_name, context, recipient_list):
     })
 
     try:
-        html_content = render_to_string(f'emails/{template_name}.html', context)
+        print("STEP 1")
+        html_content = render_to_string(
+            f'emails/{template_name}.html',
+            context
+        )
+
+        print("STEP 2")
         text_content = strip_tags(html_content)
 
+        print("STEP 3")
         email = EmailMultiAlternatives(
             subject=subject,
             body=text_content,
             from_email=str(settings.DEFAULT_FROM_EMAIL),
             to=recipient_list
         )
+
+        print("STEP 4")
         email.attach_alternative(html_content, "text/html")
 
-        # Handle QR code embedding as CID for better client compatibility
-        payment_qr_base64 = context.get('payment_qr')
+                payment_qr_base64 = context.get('payment_qr')
         if payment_qr_base64 and "base64," in payment_qr_base64:
             try:
-                # Remove header and decode
                 header, qr_data = payment_qr_base64.split('base64,')
                 qr_bytes = base64.b64decode(qr_data)
-                
-                # Attach as Inline Image
+
                 image = MIMEImage(qr_bytes)
                 image.add_header('Content-ID', '<payment_qr>')
                 image.add_header('Content-Disposition', 'inline')
                 email.attach(image)
-            except Exception as qr_err:
-                print(f"Failed to attach QR as CID: {qr_err}")
 
+            except Exception as qr_err:
+                print("QR ERROR:", qr_err)
+
+        print("EMAIL USER:", settings.EMAIL_HOST_USER)
+        print("EMAIL HOST:", settings.EMAIL_HOST)
+        print("EMAIL PORT:", settings.EMAIL_PORT)
+
+        print("STEP 5")
         email.send(fail_silently=False)
+
+        print("STEP 6")
         return True
+
     except Exception as e:
-        # Keep a silent log in case of failure for developer review
-        with open('email_error.log', 'a') as f:
-            f.write(f"[{timezone.now()}] To: {recipient_list} | Error: {str(e)}\n")
+        print("EMAIL ERROR:", e)
         return False
+
 
 def generate_otp(length=6):
     return ''.join(random.choices(string.digits, k=length))

@@ -123,7 +123,7 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_USE_SSL = False
 
-EMAIL_TIMEOUT = 20
+EMAIL_TIMEOUT = 10
 
 EMAIL_HOST_USER = 'angithavalsan@gmail.com'
 EMAIL_HOST_PASSWORD = 'dshdsyabfhrmyyeh'
