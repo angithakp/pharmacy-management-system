@@ -93,6 +93,10 @@ def send_professional_email(subject, template_name, context, recipient_list):
 
         print("STEP 5")
         print("SENDING EMAIL TO:", recipient_list)
+        print("HOST =", settings.EMAIL_HOST)
+        print("PORT =", settings.EMAIL_PORT)
+        print("TLS =", settings.EMAIL_USE_TLS)
+        print("USER =", settings.EMAIL_HOST_USER)
         email.send(fail_silently=False)
         
         print("EMAIL SENT SUCCESSFULLY")
