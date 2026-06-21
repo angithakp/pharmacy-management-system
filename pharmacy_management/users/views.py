@@ -6,6 +6,8 @@ from django.contrib.auth.decorators import login_required
 from mainapp.models import Medicine
 from .models import UserOTP
 from mainapp.utils import generate_otp, send_registration_otp, send_password_reset_otp
+from django.http import HttpResponse
+from django.core.mail import send_mail
 
 
 # ---------------- HOME ----------------
@@ -204,3 +206,17 @@ def admin_login(request):
 def logout_view(request):
     logout(request)
     return redirect('user_login')
+
+
+def test_email(request):
+    try:
+        result = send_mail(
+            "SMTP Test",
+            "Hello from Render",
+            "angithavalsan@gmail.com",
+            ["angithavalsan@gmail.com"],
+            fail_silently=False,
+        )
+        return HttpResponse(f"SUCCESS: {result}")
+    except Exception as e:
+        return HttpResponse(f"ERROR: {str(e)}")
