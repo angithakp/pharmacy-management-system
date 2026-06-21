@@ -8,6 +8,17 @@ from .models import UserOTP
 from mainapp.utils import generate_otp, send_registration_otp, send_password_reset_otp
 from django.http import HttpResponse
 from django.core.mail import send_mail
+from django.http import HttpResponse
+from mainapp.utils import send_brevo_email
+
+def test_brevo(request):
+    success = send_brevo_email(
+        "Brevo API Test",
+        "<h1>Hello from Pharmacy Project</h1>",
+        "angithavalsan@gmail.com"
+    )
+
+    return HttpResponse(f"Success = {success}")
 
 
 # ---------------- HOME ----------------
