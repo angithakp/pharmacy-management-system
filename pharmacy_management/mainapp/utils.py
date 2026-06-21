@@ -73,7 +73,7 @@ def send_professional_email(subject, template_name, context, recipient_list):
         print("STEP 4")
         email.attach_alternative(html_content, "text/html")
 
-                payment_qr_base64 = context.get('payment_qr')
+        payment_qr_base64 = context.get('payment_qr')
         if payment_qr_base64 and "base64," in payment_qr_base64:
             try:
                 header, qr_data = payment_qr_base64.split('base64,')
