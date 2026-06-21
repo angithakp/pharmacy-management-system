@@ -116,7 +116,7 @@ LOGOUT_REDIRECT_URL = '/'
 FAST2SMS_API_KEY = "YOUR_FAST2SMS_API_KEY"
 
 
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
