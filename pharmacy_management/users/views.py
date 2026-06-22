@@ -170,7 +170,11 @@ def user_login(request):
         username = request.POST.get('username')
         password = request.POST.get('password')
 
+        print("LOGIN USERNAME:", username)
+        print("LOGIN PASSWORD:", password)
+
         user = authenticate(request, username=username, password=password)
+        print("AUTH RESULT:", user)
 
         if user is not None:
             login(request, user)
